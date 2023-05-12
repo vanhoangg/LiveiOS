@@ -9,14 +9,14 @@
 import Foundation
 
 public protocol MaterialShowcaseControllerDelegate: class {
-  
+
   func materialShowcaseController(_ materialShowcaseController: MaterialShowcaseController,
                                   materialShowcaseWillDisappear materialShowcase: MaterialShowcase,
                                   forIndex index: Int)
   func materialShowcaseController(_ materialShowcaseController: MaterialShowcaseController,
                                   materialShowcaseDidDisappear materialShowcase: MaterialShowcase,
                                   forIndex index: Int)
-  
+
 }
 
 public extension MaterialShowcaseControllerDelegate {
@@ -25,7 +25,7 @@ public extension MaterialShowcaseControllerDelegate {
                                   forIndex index: Int) {
     // do nothing
   }
-  
+
   func materialShowcaseController(_ materialShowcaseController: MaterialShowcaseController,
                                   materialShowcaseDidDisappear materialShowcase: MaterialShowcase,
                                   forIndex index: Int) {
@@ -35,35 +35,35 @@ public extension MaterialShowcaseControllerDelegate {
 
 public protocol MaterialShowcaseControllerDataSource: class {
   func numberOfShowcases(for materialShowcaseController: MaterialShowcaseController) -> Int
-  
+
   func materialShowcaseController(_ materialShowcaseController: MaterialShowcaseController,
                                   showcaseAt index: Int) -> MaterialShowcase?
-  
+
 }
 
 open class MaterialShowcaseController {
   public weak var dataSource: MaterialShowcaseControllerDataSource?
   public weak var delegate: MaterialShowcaseControllerDelegate?
-  
+
   public var started = false
   public var currentIndex = -1
   public weak var currentShowcase: MaterialShowcase?
-  
+
   public init() {
-    
+
   }
-  
+
   open func start() {
     started = true
     nextShowcase()
   }
-  
+
   open func stop() {
     started = false
     currentIndex = -1
     currentShowcase?.completeShowcase(animated: true)
   }
-  
+
   open func nextShowcase() {
     if let currentShowcase = self.currentShowcase {
       currentShowcase.completeShowcase(animated: true)
@@ -95,4 +95,3 @@ extension MaterialShowcaseController: MaterialShowcaseDelegate {
     }
   }
 }
-

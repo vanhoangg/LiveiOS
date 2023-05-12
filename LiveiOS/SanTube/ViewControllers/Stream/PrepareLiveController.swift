@@ -11,13 +11,13 @@ import UIKit
 class PrepareLiveController: BaseController {
 
     // MARK: - properties
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let user = Account.current {
@@ -37,7 +37,7 @@ class PrepareLiveController: BaseController {
                     tabbar.selectedIndex = 0
                 }
             }
-        }  else {
+        } else {
             let vc = AuthenticController(nibName: "AuthenticController", bundle: Bundle.main)
             let nv = UINavigationController(rootViewController: vc)
             AppConfig.navigation.changeRootControllerTo(viewcontroller: nv)

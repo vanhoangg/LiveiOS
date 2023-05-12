@@ -15,25 +15,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
+
         // reset show case
 //        AppConfig.showCase.resetTutorial()
-        
+
         // config navigation bar
-        UINavigationBar.appearance().isTranslucent = false        
-        UINavigationBar.appearance().barTintColor = UIColor(hex:"0xFCCE2F")
-        UINavigationBar.appearance().tintColor = UIColor(hex:"0x6599FF")
-        
+        UINavigationBar.appearance().isTranslucent = false
+        UINavigationBar.appearance().barTintColor = UIColor(hex: "0xFCCE2F")
+        UINavigationBar.appearance().tintColor = UIColor(hex: "0x6599FF")
+
         // config tabbar
         UITabBar.appearance().isTranslucent = false
 //        UITabBar.appearance().tintColor = UIColor(hex:"0xff0000")
 //        UITabBar.appearance().barTintColor = UIColor(hex:"0xededed")
-        
+
         // set directory for coredata
         CoreDataStack.sharedInstance.applicationDocumentsDirectory()
-        
+
         // set root controller
         window = UIWindow.init(frame: UIScreen.main.bounds)
         let vc = LaunchController(nibName: "LaunchController", bundle: Bundle.main)
@@ -41,21 +40,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             ww.rootViewController = vc
             ww.makeKeyAndVisible()
         }
-        
+
         return FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
     }
-    
+
     func applicationWillResignActive(_ application: UIApplication) {
         FBSDKAppEvents.activateApp()
     }
-    
+
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-        if url.host == nil
-        {
-            return FBSDKApplicationDelegate.sharedInstance().application(application, open: url, sourceApplication: sourceApplication, annotation: annotation);
+        if url.host == nil {
+            return FBSDKApplicationDelegate.sharedInstance().application(application, open: url, sourceApplication: sourceApplication, annotation: annotation)
         }
-        
-        
+
         return FBSDKApplicationDelegate.sharedInstance().application(application, open: url, sourceApplication: sourceApplication, annotation: annotation)
     }
 
@@ -76,6 +73,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-
 }
-

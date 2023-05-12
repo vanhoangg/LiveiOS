@@ -13,17 +13,17 @@ import CoreData
 @objc(UserDO)
 public class UserDO: NSManagedObject {
 
-    var toDictionary:JSON {
+    var toDictionary: JSON {
         var date_of_birth = ""
-        if let created = dateOfBirth as Date?{
+        if let created = dateOfBirth as Date? {
             date_of_birth = created.toString(dateFormat: "yyyy-MM-dd HH:mm:ss")
         }
-        
+
         var created_date = ""
-        if let created = createdDate as Date?{
+        if let created = createdDate as Date? {
             created_date = created.toString(dateFormat: "yyyy-MM-dd HH:mm:ss")
         }
-        
+
         return [
             "id": id ?? "",
             "name": name ?? "",

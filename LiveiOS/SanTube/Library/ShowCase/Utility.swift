@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 public extension UIColor {
-  
+
   /// Returns color from its hex string
   ///
   /// - Parameter hexString: the color hex string
@@ -31,7 +31,7 @@ public extension UIColor {
     default:
       return UIColor.clear
     }
-    
+
     return UIColor(
       red: CGFloat(r) / 255,
       green: CGFloat(g) / 255,
@@ -41,13 +41,13 @@ public extension UIColor {
 }
 
 extension UIView {
-  
+
   // Transform a view's shape into circle
   func asCircle() {
-    self.layer.cornerRadius = self.frame.width / 2;
+    self.layer.cornerRadius = self.frame.width / 2
     self.layer.masksToBounds = true
   }
-  
+
   func setTintColor(_ color: UIColor, recursive: Bool) {
     if recursive {
       tintColor = color
@@ -72,8 +72,7 @@ extension UILabel {
   }
 }
 
-extension UIView
-{
+extension UIView {
   func copyView<T: UIView>() -> T {
     return NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: self)) as! T
   }

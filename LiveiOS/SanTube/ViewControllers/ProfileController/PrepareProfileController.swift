@@ -11,17 +11,17 @@ import UIKit
 class PrepareProfileController: BaseController {
 
     // MARK: - properties
-    
+
     // MARK: - init
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         // Do any additional setup after loading the view.
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         let appConfig = AppConfig.self
         if let user = Account.current {
             if user.is_guest {
@@ -41,7 +41,7 @@ class PrepareProfileController: BaseController {
                     guard let tabbar = self?.tabBarController else {return}
                     tabbar.selectedIndex = 0
                 }
-                
+
                 vc.onSignOut = {[weak self] in
                     guard let _ = self else {return}
                     appConfig.navigation.logOut()
@@ -55,7 +55,7 @@ class PrepareProfileController: BaseController {
     }
 
     deinit {
-        
+
         print("PrepareProfileController dealloc")
     }
 }

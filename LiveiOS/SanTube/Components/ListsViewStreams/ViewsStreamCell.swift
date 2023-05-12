@@ -17,16 +17,16 @@ class ViewsStreamCell: UITableViewCell {
     @IBOutlet weak var lblInfor: UILabel!
     @IBOutlet var lblLive: UILabel!
     @IBOutlet weak var imvIconCategory: UIImageView!
-    
+
     // MARK: - properties
-    var onTouchButton:((Stream)->Void)?
-    var object:Stream?
-    
+    var onTouchButton: ((Stream) -> Void)?
+    var object: Stream?
+
     // MARK: - init
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        
+
         configView()
     }
 
@@ -35,43 +35,43 @@ class ViewsStreamCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-    
+
     // MARK: - interface
-    func load(_ stream:Stream) {
+    func load(_ stream: Stream) {
         object = stream
-        
+
         if stream.status == AppConfig.status.stream.streaming() {
             lblLive.text = "live".localized().uppercased()
         } else {
             lblLive.isHidden = true
         }
         lblTitle.text = stream.name
-        imgThumbnail.loadImageUsingCacheWithURLString(stream.thumbnailUrl,size:CGSize(width:self.frame.size.width,height:self.frame.size.height), placeHolder: UIImage(named: APP_LOGO_PLACEHOLDER)?.tint(with: UIColor.black))
+        imgThumbnail.loadImageUsingCacheWithURLString(stream.thumbnailUrl, size: CGSize(width: self.frame.size.width, height: self.frame.size.height), placeHolder: UIImage(named: APP_LOGO_PLACEHOLDER)?.tint(with: UIColor.black))
         if let cate = stream.categories.first {
-            imvIconCategory.loadImageUsingCacheWithURLString(cate.iconUrl, size:nil, placeHolder: nil,false)
+            imvIconCategory.loadImageUsingCacheWithURLString(cate.iconUrl, size: nil, placeHolder: nil, false)
         }
         lblInfor.text = "\(stream.user.name.uppercased()) - \(stream.timeStart())"
     }
-    
+
     // MARK: - private
     func configView() {
 //        imgThumbnail.clipsToBounds = true
 //        imgThumbnail.layer.cornerRadius = 7
-        
+
 //        lblLive.clipsToBounds = true
         lblLive.font = UIFont.boldSystemFont(ofSize: 14)
 //        lblLive.layer.cornerRadius = 4
-        
+
         lblTitle.font = UIFont.systemFont(ofSize: fontSize16)
         lblTitle.textColor = #colorLiteral(red: 0.2235294118, green: 0.2235294118, blue: 0.2235294118, alpha: 1)
-        
+
         lblInfor.textColor = #colorLiteral(red: 0.3725490196, green: 0.2784313725, blue: 0.1921568627, alpha: 1)
     }
-    
+
     func configText() {
-        
+
     }
-    
+
 //    func startPlay() {
 //        if let streammm = self.object {
 //            var videoURL = URL(string: "http://\(ConfigStream.current.ip):\(ConfigStream.current.port)/buup_live/\(streammm.id)/playlist.m3u8")
@@ -100,7 +100,7 @@ class ViewsStreamCell: UITableViewCell {
 //            }
 //        }
 //    }
-    
+
     // MARK: - preuse
     override func prepareForReuse() {
 //        stopPlay()

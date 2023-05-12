@@ -12,25 +12,25 @@ class CommentController: BaseController {
 
     // MARK: - outlet
     @IBOutlet weak var tableView: UITableView!
-    
+
     // MARK: - properties
-    var listComments:[JSON] = []
-    var isLoading:Bool = false
-    var reloadAll:Bool = false
-    
-    var page:Int = 1 {
-        didSet{
+    var listComments: [JSON] = []
+    var isLoading: Bool = false
+    var reloadAll: Bool = false
+
+    var page: Int = 1 {
+        didSet {
             loadData()
         }
     }
-    var stream:Stream? = nil {
-        didSet{
+    var stream: Stream? {
+        didSet {
             loadData(true)
         }
     }
-    
+
     // MARK: - closures
-    
+
     // MARK: - init
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,22 +38,22 @@ class CommentController: BaseController {
         // Do any additional setup after loading the view.
         tableView.register(UINib(nibName: "CommentCell", bundle: Bundle.main), forCellReuseIdentifier: "cell")
     }
-    
+
     // MARK: - interface
-    func load(data:[JSON]) {
+    func load(data: [JSON]) {
         listComments = data
-        
+
         tableView.reloadData()
     }
-    
+
     // MARK: - private
-    func loadData(_ isReloadAll:Bool = false) {
+    func loadData(_ isReloadAll: Bool = false) {
         for _ in 0..<50 {
-            self.listComments.append(["test":"abc"])
+            self.listComments.append(["test": "abc"])
         }
-        
+
         tableView.reloadData()
-        
+
 //        guard let obj = self.stream else {return}
 //
 //        isLoading = true
@@ -103,24 +103,24 @@ class CommentController: BaseController {
 //                break
 //            }
 //        }
-        
+
     }
 }
 
 // MARK: - Tableview delegate
-extension CommentController:UITableViewDelegate, UITableViewDataSource {
+extension CommentController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! CommentCell
-        
-        cell.load(data:listComments[indexPath.row])
-        
+
+        cell.load(data: listComments[indexPath.row])
+
         return cell
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return listComments.count
     }

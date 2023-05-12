@@ -17,7 +17,7 @@ class DetailStreamController: BaseController {
     @IBOutlet weak var btnComments: UIButton!
     @IBOutlet weak var btnRelatedVideos: UIButton!
     @IBOutlet weak var vwInfo: UIScrollView!
-    
+
     // MARK: - outlet info
     @IBOutlet weak var lblTitleStream: UILabel!
     @IBOutlet weak var btnNumberOfLikes: UILabel!
@@ -33,20 +33,18 @@ class DetailStreamController: BaseController {
     @IBOutlet weak var imvIconComment: UIImageView!
     @IBOutlet weak var imvIconLikes: UIImageView!
     @IBOutlet weak var imvIconViews: UIImageView!
-    
-    
+
     // MARK: - properties
-    var btnSelected:UIButton?
-    var stream:Stream?
-    var inforStreamController:InformationStreamController!
-    var streamVideoController:PresentVideoController?
-    var isGoDirect:Bool = false // check if go from quickview
-    
+    var btnSelected: UIButton?
+    var stream: Stream?
+    var inforStreamController: InformationStreamController!
+    var streamVideoController: PresentVideoController?
+    var isGoDirect: Bool = false // check if go from quickview
+
     // MARK: - closures
-    var onViewDidLoad:(()->Void)?
-    var onGotoLiveStream:((Stream)->Void)?
-    
-    
+    var onViewDidLoad: (() -> Void)?
+    var onGotoLiveStream: ((Stream) -> Void)?
+
     // MARK: - init
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,7 +65,7 @@ class DetailStreamController: BaseController {
 //            _self.closeStream(isForce: false)
             _self.dismiss(animated: true, completion: nil)
         }
-        
+
         inforStreamController.onReloadOfflineStream = {[weak self] str in
             guard let _self = self else {return}
             _self.stream = str
@@ -82,31 +80,31 @@ class DetailStreamController: BaseController {
             _self.inforStreamController.stream = str
             _self.inforStreamController.load(str)
         }
-        
+
         configView()
         addDefaultMenu()
-        
+
         onViewDidLoad = {[weak self] in
             guard let _self = self else {return}
             if let str = _self.stream, let present = _self.streamVideoController {
                 _self.loadStream(stream: str, vc: present)
             }
         }
-        
+
         onViewDidLoad?()
     }
-    
+
     deinit {
         streamVideoController?.shouldAddCustomMedia = false
         onDissmiss?()
         if let strController =  streamVideoController, let str = self.stream {
             strController.forceOpenPlayBackControl = false
-            strController.onTurnOffStream?(str,strController)
+            strController.onTurnOffStream?(str, strController)
         }
     }
-    
+
     // MARK: - interface
-    func loadStream(stream:Stream,vc:PresentVideoController) {
+    func loadStream(stream: Stream, vc: PresentVideoController) {
         self.stream = stream
         isGoDirect = vc.parent == nil
         if !isGoDirect {
@@ -135,7 +133,7 @@ class DetailStreamController: BaseController {
         }
 //        vc.avPlayerViewController.player?.play()
     }
-    
+
     // MARK: - private    
     func configView() {
     }

@@ -9,17 +9,17 @@
 import XCTest
 @testable import SanTube
 class SanTubeTests: XCTestCase {
-    
+
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
-    
+
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-    
+
     func testRemoveScriptFromString() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
@@ -27,27 +27,27 @@ class SanTubeTests: XCTestCase {
         print(a)
         XCTAssert(!a.contains("</script>") && !a.contains("/>"))
     }
-    
+
     func testRegisterWithApi() {
         let promise = expectation(description: "Start involke api/register")
         Server.shared.register(email: "phamdaiit@gmail.com",
                                password: "123456",
                                password_confirmation: "123456",
-                               "test") { (json, err) in
+                               "test") { (_, err) in
             if err != nil {
                 print(err.debugDescription)
             } else {
                 promise.fulfill()
             }
         }
-        
+
         waitForExpectations(timeout: 5, handler: nil)
         XCTAssert(promise.assertForOverFulfill, "API DONT WPRKING")
     }
-    
+
     func testGetListFollowWithApi() {
         let promise = expectation(description: "Start involke api/follows")
-        Server.shared.getListFollows(userIds: ["516","3222"],
+        Server.shared.getListFollows(userIds: ["516", "3222"],
                                      isFollowing: true,
                                      page: 1) { (listUser, message, morPage) in
                                         if let list = listUser {
@@ -59,11 +59,11 @@ class SanTubeTests: XCTestCase {
                                         print("MORE PAGE:\t\t \(morPage ?? false)\n====================\n")
                                         promise.fulfill()
         }
-        
+
         waitForExpectations(timeout: 3, handler: nil)
         XCTAssert(promise.assertForOverFulfill, "API DONT WPRKING")
     }
-    
+
     func testFollowWithApi() {
         let promise = expectation(description: "Start involke api/follows")
         Server.shared.actionFollow(followerId: "3222",
@@ -73,11 +73,11 @@ class SanTubeTests: XCTestCase {
                                     print(msgErr)
                                     promise.fulfill()
         }
-        
+
         waitForExpectations(timeout: 3, handler: nil)
         XCTAssert(promise.assertForOverFulfill, "API DONT WPRKING")
     }
-    
+
     func testCheckFollowWithApi() {
         let promise = expectation(description: "Start involke api/follows")
         Server.shared.checkFollow(followerId: "322",
@@ -86,23 +86,23 @@ class SanTubeTests: XCTestCase {
                                     print(msgErr)
                                     promise.fulfill()
         }
-        
+
         waitForExpectations(timeout: 3, handler: nil)
         XCTAssert(promise.assertForOverFulfill, "API DONT WPRKING")
     }
-    
+
     func testValidPassword() {
-        
+
         XCTAssertFalse(" 12345".isValidPassword(), "expect: FALSE")
         XCTAssertFalse("@612     ".isValidPassword(), "expect: FALSE")
-        
+
         XCTAssertTrue("612345".isValidPassword(), "expect: TRUE")
         XCTAssertTrue("612'345".isValidPassword(), "expect: TRUE")
         XCTAssertTrue("@612'345".isValidPassword(), "expect: TRUE")
     }
-    
+
     func testValidEmail() {
-        for (i,p) in ["NotAnEmail"
+        for (i, p) in ["NotAnEmail"
 //                  "@NotAnEmail",
 //                  "\"\"test\\blah\"\"@example.com",
 //                  "\"test\\\rblah\"@example.com",
@@ -141,12 +141,12 @@ class SanTubeTests: XCTestCase {
                     }
         }
     }
-    
+
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measure {
             // Put the code you want to measure the time of here.
         }
     }
-    
+
 }

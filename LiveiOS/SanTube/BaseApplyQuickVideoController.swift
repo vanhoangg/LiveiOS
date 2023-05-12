@@ -10,7 +10,6 @@ import UIKit
 
 class BaseApplyQuickVideoController: BaseController {
 
-    
     // MARK: - init
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,28 +17,28 @@ class BaseApplyQuickVideoController: BaseController {
         tabbarVC.delegate = self
         tabbarVC.registerControllerPresent = self.navigationController
     }
-    
+
     // MARK: - override
     func configQuickView() {
         guard let tabbarVC = self.tabBarController as? BaseTabbarController else { return }
         tabbarVC.configQuickView()
     }
-    
+
     func prepareToOpenStream() {
         guard let tabbarVC = self.tabBarController as? BaseTabbarController else { return }
         tabbarVC.prepareToOpenStream()
     }
-    
+
     func closeQuickView() {
         guard let tabbarVC = self.tabBarController as? BaseTabbarController else { return }
         tabbarVC.closeQuickView()
     }
-    
+
     func minimizeQuickView() {
         guard let tabbarVC = self.tabBarController as? BaseTabbarController else { return }
         tabbarVC.minimizeQuickView()
     }
-    
+
     func fullScreenView() {
         guard let tabbarVC = self.tabBarController as? BaseTabbarController else { return }
         tabbarVC.fullScreenView()

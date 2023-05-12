@@ -13,9 +13,9 @@ import CoreData
 @objc(ConfigDO)
 public class ConfigDO: NSManagedObject {
 
-    var toDict:JSON {
-        return["ip":ip ?? "",
-        "port":port ?? "",
+    var toDict: JSON {
+        return["ip": ip ?? "",
+        "port": port ?? "",
         "username": username ?? "",
         "password": password ?? ""]
     }

@@ -3,12 +3,12 @@
 
 target ‘SanTube’ do
   use_frameworks!
-  pod 'FacebookCore'
-  pod 'FacebookLogin'
+  pod 'FacebookCore', '~> 0.9.0'
+  pod 'FacebookLogin', '~> 0.9.0'
   pod 'Alamofire'
   pod 'Localize-Swift'
   pod 'ijkplayer'
   pod 'TLPhotoPicker'
-  pod 'Socket.IO-Client-Swift'
+  pod 'Socket.IO-Client-Swift', '~> 12.0.0'
   pod 'Daysquare', :git => 'https://github.com/unixzii/Daysquare.git'
 end

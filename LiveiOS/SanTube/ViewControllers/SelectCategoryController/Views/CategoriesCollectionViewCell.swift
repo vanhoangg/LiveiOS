@@ -13,36 +13,36 @@ class CategoriesCollectionViewCell: UICollectionViewCell {
     // MARK: - oulet
     @IBOutlet weak var imvAvatar: UIImageViewRound!
     @IBOutlet weak var lblName: UILabel!
-    
+
     // MARK: - properties
-    var object:Category?
-    
+    var object: Category?
+
     // MARK: - init
     override func awakeFromNib() {
         super.awakeFromNib()
-        
+
         configView()
     }
 
     // MARK: - interface
-    func load(cate:Category, check:Bool) {
+    func load(cate: Category, check: Bool) {
         self.object = cate
         lblName.text = cate.name
         imvAvatar.loadImageUsingCacheWithURLString(cate.img, size: imvAvatar.frame.size, placeHolder: nil)
         if check {
-            imvAvatar.addMask(color: UIColor.black,0.6)
+            imvAvatar.addMask(color: UIColor.black, 0.6)
         } else {
             imvAvatar.removeMask()
         }
     }
-    
+
     // MARK: - private
     func configView() {
         lblName.font = UIFont.boldSystemFont(ofSize: fontSize16)
         lblName.textColor = UIColor.white
         imvAvatar.layer.cornerRadius = 5.0
     }
-    
+
     // MARK: - prepare reuse
     override func prepareForReuse() {
         imvAvatar.removeMask()

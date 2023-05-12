@@ -12,14 +12,13 @@ import Foundation
 
 //// api s3corp
 let domain = "http://santube.s3corp.vn:9999/api"
-//// MARK: - Socket server
+// MARK: - Socket server
 let socket_server = "http://santube.s3corp.vn:3000"
 
-
 // api prod
-//let domain = "http://api.santube.net/api"
+// let domain = "http://api.santube.net/api"
 // MARK: - Socket server
-//let socket_server = "http://socket.santube.net:3000"
+// let socket_server = "http://socket.santube.net:3000"
 
 ///////////////////////////////////////////////////////////////////////////
 // MARK: - API
@@ -48,8 +47,6 @@ let api_usershipping = "\(domain)/userShippings"
 let api_follows = "\(domain)/follows"
 let api_check_follows = "\(domain)/check_follows"
 let api_report = "\(domain)/report"
-
-
 
 // MARK: - STATUS STREAM
 let SS_START = "10"
@@ -96,15 +93,15 @@ let THUMNAIL_STREAM_BUTTON = "2"
 let MINI_GAME_BUTTON = "3"
 
 // MARK: - IMAGE
-let APP_LOGO:String = "ic_santube"
-let APP_LOGO_PLACEHOLDER:String = "ic_santube_placeholder.png"
+let APP_LOGO: String = "ic_santube"
+let APP_LOGO_PLACEHOLDER: String = "ic_santube_placeholder.png"
 
 // MARK: - QUICKVIEW IDENTIFIER
-let QUICK_VIEW_TAG:Int = 99999999
+let QUICK_VIEW_TAG: Int = 99999999
 
 // MARK: - FONT
-let font_scale:CGFloat = 0.8
-var fontSize14:CGFloat{
+let font_scale: CGFloat = 0.8
+var fontSize14: CGFloat {
     get {
         if UIScreen.main.bounds.size.width <= 320 {
             return 14 * font_scale
@@ -113,7 +110,7 @@ var fontSize14:CGFloat{
     }
 }
 
-var fontSize13:CGFloat{
+var fontSize13: CGFloat {
     get {
         if UIScreen.main.bounds.size.width <= 320 {
             return 13 * font_scale
@@ -122,7 +119,7 @@ var fontSize13:CGFloat{
     }
 }
 
-var fontSize20:CGFloat{
+var fontSize20: CGFloat {
     get {
         if UIScreen.main.bounds.size.width <= 320 {
             return 20 * font_scale
@@ -131,7 +128,7 @@ var fontSize20:CGFloat{
     }
 }
 
-var fontSize24:CGFloat{
+var fontSize24: CGFloat {
     get {
         if UIScreen.main.bounds.size.width <= 320 {
             return 24 * font_scale
@@ -140,7 +137,7 @@ var fontSize24:CGFloat{
     }
 }
 
-var fontSize16:CGFloat{
+var fontSize16: CGFloat {
     get {
         if UIScreen.main.bounds.size.width <= 320 {
             return 16 * font_scale
@@ -149,7 +146,7 @@ var fontSize16:CGFloat{
     }
 }
 
-var fontSize17:CGFloat{
+var fontSize17: CGFloat {
     get {
         if UIScreen.main.bounds.size.width <= 320 {
             return 17 * font_scale
@@ -158,7 +155,7 @@ var fontSize17:CGFloat{
     }
 }
 
-var fontSize18:CGFloat{
+var fontSize18: CGFloat {
     get {
         if UIScreen.main.bounds.size.width <= 320 {
             return 18 * font_scale
@@ -167,7 +164,7 @@ var fontSize18:CGFloat{
     }
 }
 
-var fontSize15:CGFloat{
+var fontSize15: CGFloat {
     get {
         if UIScreen.main.bounds.size.width <= 320 {
             return 15 * font_scale
@@ -176,7 +173,7 @@ var fontSize15:CGFloat{
     }
 }
 
-var fontSize22:CGFloat{
+var fontSize22: CGFloat {
     get {
         if UIScreen.main.bounds.size.width <= 320 {
             return 22 * font_scale

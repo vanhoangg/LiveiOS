@@ -9,14 +9,13 @@
 import UIKit
 import SocketIO
 
-let kOFFSET_FOR_KEYBOARD:CGFloat = 170
-let kHEIGHT_TABLEVIEW:CGFloat = 250
-
+let kOFFSET_FOR_KEYBOARD: CGFloat = 170
+let kHEIGHT_TABLEVIEW: CGFloat = 250
 
 class InformationStreamController: UIViewController {
 
     let socket = SocketIOClient(socketURL: URL(string: socket_server)!, config: [.log(true), .forceWebsockets(true)])
-    
+
     var room: Room!
     // MARK: - init
     override func viewDidLoad() {
@@ -29,7 +28,7 @@ class InformationStreamController: UIViewController {
         checkStreamOwned()
         checkFollow()
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if #available(iOS 11.0, *) {
@@ -37,11 +36,11 @@ class InformationStreamController: UIViewController {
             view.removeConstraint(self.topConstaintStackviewInfor)
             self.topConstraintBtnClose = iconClose.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 7)
             self.topConstaintStackviewInfor = stackInfor.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
-            
+
             view.addConstraint(self.topConstraintBtnClose)
             view.addConstraint(self.topConstaintStackviewInfor)
         }
-        
+
 //        if isShowingShowcase || AppConfig.showCase.isShowTutorial(with: VIEW_STREAM_SCENE) || timerCheckingShouldStartShowcase != nil {return}
 //        timerCheckingShouldStartShowcase = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: {[weak self] timer in
 //            guard let _self = self else {return}
@@ -55,15 +54,15 @@ class InformationStreamController: UIViewController {
 //            }
 //        })
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         iconClose.addEvent {
             self.onShouldClose?()
         }
-        
+
         registerAction()
-        
+
         NotificationCenter.default.addObserver(self, selector: #selector(getNotificationFromCustom(_:)), name: NSNotification.Name("App:CustomControlMediaDidHide"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
@@ -71,23 +70,23 @@ class InformationStreamController: UIViewController {
         tapgesture = UITapGestureRecognizer(target: self, action: #selector(doubleTap(_:)))
         tapgesture.numberOfTapsRequired = 2
         view.addGestureRecognizer(tapgesture)
-        
+
         guard let stream = self.stream else { return }
         load(stream)
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         iconClose.removeEvent()
         lblActionFollow.removeEvent()
-        
+
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("App:CustomControlMediaDidHide"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardDidChangeFrame, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         view.removeGestureRecognizer(tapgesture)
         view.endEditing(true)
-        
+
         if timerCheckSendComment != nil {
             timerCheckSendComment.invalidate()
         }
@@ -99,19 +98,19 @@ class InformationStreamController: UIViewController {
         }
         socket.disconnect()
     }
-    
-    func handlingSocket(){
+
+    func handlingSocket() {
         guard let user = Account.current else {
             return
         }
         socket.disconnect()
         room = Room(dict: [
-            "user_id": user.id as AnyObject ,
+            "user_id": user.id as AnyObject,
             "stream_id": self.stream?.id as AnyObject,
             "api_token": user.api_token as AnyObject
             ])
         socket.connect()
-        socket.on("connect") {[weak self] data, ack in
+        socket.on("connect") {[weak self] _, _ in
             guard let _self = self else {
                 return
             }
@@ -119,7 +118,7 @@ class InformationStreamController: UIViewController {
         }
         if let str = self.stream {
             if str.status == AppConfig.status.stream.streaming() {
-                socket.on("num_of_views") {[weak self] data, ack in
+                socket.on("num_of_views") {[weak self] data, _ in
                     guard let _self = self else {
                         return
                     }
@@ -128,25 +127,25 @@ class InformationStreamController: UIViewController {
                 }
             }
         }
-        socket.on("num_of_likes") {[weak self] data, ack in
+        socket.on("num_of_likes") {[weak self] data, _ in
             guard let _self = self else {
                 return
             }
              let num = data[0] as? Int64
-            if let num  = num{
+            if let num  = num {
                 _self.btnLike.setTitle(num.toNumberStringView(false), for: .normal)
             } else {
                 _self.btnLike.setTitle("0", for: .normal)
             }
         }
-        socket.on("update_public_quantity") {[weak self] data, ack in
+        socket.on("update_public_quantity") {[weak self] data, _ in
             guard let _self = self else {
                 return
             }
-            
+
             if let data = data[0] as? [JSON], let stream = _self.stream {
                 let listProducts = stream.products
-                var updatedProdcts:[Product] = []
+                var updatedProdcts: [Product] = []
                 for item in data {
                     for pro in listProducts {
                         if let id = item["productId"] as? Int, let sale = item["noOfSell"] as? Int {
@@ -176,23 +175,23 @@ class InformationStreamController: UIViewController {
                         }
                     }
                 }
-                
+
                 _self.stream?.products = updatedProdcts
                 NotificationCenter.default.post(name: NSNotification.Name("App:NeedUpdatedQuanityProduct"), object: nil)
             }
             print("==> \(data)")
         }
-        socket.on("stream_stoped") {[weak self] data, ack in
+        socket.on("stream_stoped") {[weak self] _, _ in
             guard let _self = self else {
                 return
             }
-            
+
             // show the alert
             _self.onShouldPresentMessage?("this_video_has_been_stop".localized())
- 
+
         }
     }
-    
+
     deinit {
         print("InformationStreamController dealloc")
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("App::emitOrderSuccess"), object: nil)
@@ -206,55 +205,55 @@ class InformationStreamController: UIViewController {
             self.timerCheckIsCheckingOrder?.invalidate()
             self.timerCheckIsCheckingOrder = nil
         }
-        
+
         self.timerUpdateTimeLive.invalidate()
-        
+
         self.timerCheckingShouldStartShowcase?.invalidate()
         self.timerCheckingShouldStartShowcase = nil
     }
-    
+
     // MARK: - api
-    func load(_ stream:Stream) {
+    func load(_ stream: Stream) {
         self.stream = stream
-        
+
         loadOrder()
         loadDetailStream()
-        
+
         handlingSocket()
-        
+
         if let stream = self.stream {
             let time = Date().timeIntervalSince((stream.startTime).toDate2())
             let formatter = DateFormatter()
             formatter.timeZone = TimeZone(abbreviation: "UTC")
             formatter.dateFormat = time > 60*60 ? "HH:mm:ss" : "mm:ss"
-            
+
             self.btnTime.setTitle(formatter.string(from: Date(timeIntervalSince1970: (time))), for: UIControlState())
             self.btnTime.isHidden = stream.status != AppConfig.status.stream.streaming()
             self.btnRelated.isHidden = stream.status == AppConfig.status.stream.streaming()
-            
+
             if stream.status != AppConfig.status.stream.streaming() {
                 loadRelatedVideos()
             }
         }
-        
+
         if timerUpdateTimeLive != nil {
             timerUpdateTimeLive.invalidate()
         }
-        timerUpdateTimeLive = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
+        timerUpdateTimeLive = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (_) in
             if let stream = self.stream {
                 let time = Date().timeIntervalSince((stream.startTime).toDate2())
                 let formatter = DateFormatter()
                 formatter.timeZone = TimeZone(abbreviation: "UTC")
                 formatter.dateFormat = time > 60*60 ? "HH:mm:ss" : "mm:ss"
                 self.btnTime.setTitle(formatter.string(from: Date(timeIntervalSince1970: (time))), for: UIControlState())
-                
+
             }
         }
-        
+
         self.btnViews.setTitle(stream.noOfViews.toNumberStringView(false), for: .normal)
         self.btnLike.setTitle(stream.noOfLikes.toNumberStringView(false), for: .normal)
         self.btnOrder.isHidden = stream.products.count == 0
-        
+
         self.btnUser.setTitle(stream.user.name, for: UIControlState())
         UIImageView().loadImageUsingCacheWithURLString(stream.user.avatar, size: nil, placeHolder: nil, false) {[weak self] (image) in
             guard let _self = self, let img = image else {return}
@@ -263,27 +262,27 @@ class InformationStreamController: UIViewController {
             _self.btnUser.imageView?.layer.cornerRadius = 12.5
         }
     }
-    
+
     func emitOrderSuccess() {
         // emit socket update quantity products
         socket.emit("buy_product", self.room.toDict())
-        
+
         // check user has ordered
         loadOrder()
     }
-    
-    func updateDuration(duration:Int) {
+
+    func updateDuration(duration: Int) {
         btnTime.setTitle("\(duration)", for: UIControlState())
     }
-    
+
     // MARK: - event
     private func registerAction() {
         lblActionFollow.addEvent {
-            
+
             guard let stream = self.stream, let user = Account.current else {return}
-            
+
             if user.is_guest {
-                Support.notice(title: "notice".localized().capitalizingFirstLetter(), message: "please_login_to_use_this_function".localized().capitalizingFirstLetter(), vc: self, ["cancel".localized().capitalizingFirstLetter(),"login".localized().capitalizingFirstLetter()], {[weak self] action in
+                Support.notice(title: "notice".localized().capitalizingFirstLetter(), message: "please_login_to_use_this_function".localized().capitalizingFirstLetter(), vc: self, ["cancel".localized().capitalizingFirstLetter(), "login".localized().capitalizingFirstLetter()], {[weak self] action in
                     guard let _self = self else {return}
                     if action.title == "login".localized().capitalizingFirstLetter() {
                         let vc = AuthenticController(nibName: "AuthenticController", bundle: Bundle.main)
@@ -303,11 +302,11 @@ class InformationStreamController: UIViewController {
                 })
                 return
             }
-            
+
             loadingFollow.isHidden = false
             loadingFollow.startAnimating()
             lblActionFollow.isHidden = true
-            Server.shared.actionFollow(followerId: stream.user.id, followingId: user.id, unFollow: btnFollow.isSelected, {[weak self] (done, msgErr) in
+            Server.shared.actionFollow(followerId: stream.user.id, followingId: user.id, unFollow: btnFollow.isSelected, {[weak self] (_, msgErr) in
                 guard let _self = self else {return}
                 if let msg = msgErr {
                     Support.notice(title: "notice".localized().capitalizingFirstLetter(),
@@ -319,8 +318,8 @@ class InformationStreamController: UIViewController {
             })
         }
     }
-    
-    func doubleTap(_ sender:UITapGestureRecognizer) {
+
+    func doubleTap(_ sender: UITapGestureRecognizer) {
         guard let str = self.stream else {
             view.removeGestureRecognizer(sender)
             return
@@ -329,11 +328,11 @@ class InformationStreamController: UIViewController {
             view.removeGestureRecognizer(sender)
             return
         }
-        
+
         if !vwMoreAction.isHidden || !vwRelatedVideos.isHidden {
             return
         }
-  
+
         if let parent = self.parent as? DetailStreamController {
             if let presentVideoController = parent.streamVideoController {
                 if presentVideoController.customControlMedia != nil {
@@ -343,7 +342,7 @@ class InformationStreamController: UIViewController {
                             _self.showControl(isShow: isHide)
                         }
                     } else {
-                        self.showControl(isShow:false) {
+                        self.showControl(isShow: false) {
                             presentVideoController.hideCustomMediaControl(true, isForce: true) {[weak self] isHide in
                                 guard let _self = self else {return}
                                 _self.showControl(isShow: isHide)
@@ -354,19 +353,19 @@ class InformationStreamController: UIViewController {
             }
         }
     }
-    
-    func touchButton(sender:UIButton) {
+
+    func touchButton(sender: UIButton) {
         guard let user = Account.current else {
             return
         }
-        
+
         // check user is guest
         if sender.isEqual(btnLike) ||
             sender.isEqual(btnReport) ||
             sender.isEqual(btnFollow) ||
             sender.isEqual(btnOrder) {
             if user.is_guest {
-                Support.notice(title: "notice".localized().capitalizingFirstLetter(), message: "please_login_to_use_this_function".localized().capitalizingFirstLetter(), vc: self, ["cancel".localized().capitalizingFirstLetter(),"login".localized().capitalizingFirstLetter()], {[weak self] action in
+                Support.notice(title: "notice".localized().capitalizingFirstLetter(), message: "please_login_to_use_this_function".localized().capitalizingFirstLetter(), vc: self, ["cancel".localized().capitalizingFirstLetter(), "login".localized().capitalizingFirstLetter()], {[weak self] action in
                     guard let _self = self else {return}
                     if action.title == "login".localized().capitalizingFirstLetter() {
                         let vc = AuthenticController(nibName: "AuthenticController", bundle: Bundle.main)
@@ -387,43 +386,43 @@ class InformationStreamController: UIViewController {
                 return
             }
         }
-        
+
         if sender.isEqual(btnRelated) {
             showRelatedVideos(isShow: true)
             return
         }
-        
+
         if sender.isEqual(btnOrder) {
             if isCheckingOrder {
                 sender.startAnimation(activityIndicatorStyle: .gray)
                 if timerCheckIsCheckingOrder != nil {
                     timerCheckIsCheckingOrder?.invalidate()
                 }
-                timerCheckIsCheckingOrder = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: {[weak self] timer in
+                timerCheckIsCheckingOrder = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: {[weak self] _ in
                     guard let _self = self else {return}
                     if !_self.isCheckingOrder {
                         _self.timerCheckIsCheckingOrder?.invalidate()
                         _self.timerCheckIsCheckingOrder = nil
-                        
+
                         _self.gotoChooseOrderItem(_self.listOrders.count > 0)
                     }
                 })
                 return
             }
-            
+
             gotoChooseOrderItem(self.listOrders.count > 0)
         } else if sender.isEqual(btnSendLike) {
-            
+
             if sender.isSelected != true {
                 self.socket.emit("up_like", self.room.toDict())
-            }else{
+            } else {
                 self.socket.emit("un_like", self.room.toDict())
             }
             sender.isSelected = !sender.isSelected
         } else if sender.isEqual(btnOption) {
-            
+
             showMoreAction(isShow: true)
-            
+
         } else if sender.isEqual(btnReport) {
             UIView.animate(withDuration: 0.3, animations: {
                 self.vwMoreAction.transform = CGAffineTransform(translationX: 0, y: self.vwMoreAction.frame.size.height + 40)
@@ -456,13 +455,13 @@ class InformationStreamController: UIViewController {
                     textfield.layer.cornerRadius = 10
                     textfield.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0.71)
                     textfield.alpha = 0
-                    
+
                     _self.view.addSubview(textfield)
                     textfield.translatesAutoresizingMaskIntoConstraints = false
                     textfield.centerXAnchor.constraint(equalTo: _self.view.centerXAnchor).isActive = true
                     textfield.centerYAnchor.constraint(equalTo: _self.view.centerYAnchor).isActive = true
                     textfield.heightAnchor.constraint(equalToConstant: 50).isActive = true
-                    
+
                     UIView.animate(withDuration: 0.3, animations: {
                         textfield.alpha = 1
                     }, completion: {done in
@@ -475,13 +474,13 @@ class InformationStreamController: UIViewController {
                     })
                 }
             })
-            
+
         } else if sender.isEqual(btnFollow) {
             guard let stream = self.stream else {return}
             loadingFollow.isHidden = false
             loadingFollow.startAnimating()
             btnFollow.isHidden = true
-            Server.shared.actionFollow(followerId: stream.user.id, followingId: user.id, unFollow: btnFollow.isSelected, {[weak self] (done, msgErr) in
+            Server.shared.actionFollow(followerId: stream.user.id, followingId: user.id, unFollow: btnFollow.isSelected, {[weak self] (_, msgErr) in
                 guard let _self = self else {return}
                 if let msg = msgErr {
                     Support.notice(title: "notice".localized().capitalizingFirstLetter(),
@@ -494,37 +493,37 @@ class InformationStreamController: UIViewController {
         }
     }
 
-    func closeRelatedVideo(_ sender:UIButton) {
+    func closeRelatedVideo(_ sender: UIButton) {
         showRelatedVideos(isShow: false)
     }
-    
-    func closeMorAction(_ sender:UIButton) {
+
+    func closeMorAction(_ sender: UIButton) {
         showMoreAction(isShow: false)
     }
-    
+
     // MARK: - private
-    private func gotoChooseOrderItem(_ isEdit:Bool = false) {
-        
+    private func gotoChooseOrderItem(_ isEdit: Bool = false) {
+
         guard let stream = stream, let user = Account.current else {return}
-        
+
         let vc = SelectOrderItemController(nibName: "SelectOrderItemController", bundle: Bundle.main)
         vc.type = isEdit ? .edit : .new
         vc.delegate = self
-        
+
         var order = Order()
-        
+
         order.streamId = stream.id
         order.sellerId = stream.user.id
         order.buyerId = user.id
         order.status = AppConfig.status.order.create_new()
         order.products = stream.products
-        
+
         if isEdit /* order has existed, load again to change state edit for next view*/{
-            
+
             // set order is last order with products only selected
             order = listOrders.last!
             for item in stream.products {
-                for (i,item1) in order.products.enumerated() {
+                for (i, item1) in order.products.enumerated() {
                     if item.id == item1.id {
                         var pro = item1
                         pro.noOfSell = item.noOfSell
@@ -533,7 +532,7 @@ class InformationStreamController: UIViewController {
                     }
                 }
             }
-            
+
             // append another products of Stream
             for item in stream.products {
                 if !order.products.contains(where: { (pro) -> Bool in
@@ -543,18 +542,18 @@ class InformationStreamController: UIViewController {
                 }
             }
         }
-        
+
         vc.order = order
-        
+
         let nv = UINavigationController(rootViewController: vc)
         Support.topVC!.present(nv, animated: false, completion: nil)
     }
-    
+
     private func loadOrder() {
-        
+
         guard let stream = self.stream, let user = Account.current else { return }
-        
-        //check if stream not products to sales, hide the button order
+
+        // check if stream not products to sales, hide the button order
         isCheckingOrder = true
         let currentDate = Date()
         let yesterday = Date().addingTimeInterval(-60*60*24)
@@ -563,7 +562,7 @@ class InformationStreamController: UIViewController {
                                 sellerId: stream.user.id,
                                 status: nil,
                                 fromDate: yesterday.toString(dateFormat: "yyyy-MM-dd").appending(" 00:00:00"),
-                                toDate: currentDate.toString(dateFormat: "yyyy-MM-dd").appending(" 23:59:59"), page: 1) {[weak self] (orders, err) in
+                                toDate: currentDate.toString(dateFormat: "yyyy-MM-dd").appending(" 23:59:59"), page: 1) {[weak self] (orders, _) in
                                     guard let _self = self else {return}
                                     _self.isCheckingOrder = false
                                     guard let orders = orders else {
@@ -572,10 +571,10 @@ class InformationStreamController: UIViewController {
                                     }
                                     _self.listOrders = orders
                                     _self.btnOrder.setChecked(orders.count > 0)
-                                    
+
         }
     }
-    
+
     private func loadDetailStream() {
         guard let stream = self.stream, let user = Account.current else { return }
         Server.shared.getStream(streamId: stream.id,
@@ -593,12 +592,12 @@ class InformationStreamController: UIViewController {
                                     }
         }
     }
-    
+
     private func checkStreamOwned() {
         guard let user = Account.current, let stream = self.stream else { return }
         lblActionFollow.isHidden = user.id == stream.user.id
     }
-    
+
     private func checkFollow() {
         guard let user = Account.current, let stream = self.stream, !user.is_guest, user.id != stream.user.id else { return }
         Server.shared.checkFollow(followerId: stream.user.id,
@@ -611,25 +610,25 @@ class InformationStreamController: UIViewController {
                                         guard let done = done else {return}
                                         _self.btnFollow.isSelected = done
                                         _self.btnFollow.layer.borderColor =  (!done ? #colorLiteral(red: 0.9882352941, green: 0.8078431373, blue: 0.1843137255, alpha: 1) : #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)).cgColor
-                                        
+
                                         _self.lblActionFollow.text = (!done ? "  \("follow".localized().capitalizingFirstLetter())  " : "  \("unfollow".localized().capitalizingFirstLetter())  ")
-                                        
+
                                         _self.lblActionFollow.textColor = (!done ? #colorLiteral(red: 0.9882352941, green: 0.8078431373, blue: 0.1843137255, alpha: 1) : #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))
                                         _self.lblActionFollow.layer.borderColor = (!done ? #colorLiteral(red: 0.9882352941, green: 0.8078431373, blue: 0.1843137255, alpha: 1) : #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))
-                                        
+
                                     }
                                     _self.loadingFollow.isHidden = true
                                     _self.lblActionFollow.isHidden = false
                                     _self.loadingFollow.stopAnimating()
         }
     }
-    
+
     private func loadRelatedVideos() {
-        
+
         if !vwRelatedVideos.isHidden {
             showRelatedVideos(isShow: false)
         }
-        
+
         guard let obj = self.stream else {
             btnRelated.isHidden = true
             return
@@ -638,15 +637,15 @@ class InformationStreamController: UIViewController {
             btnRelated.isHidden = true
             return
         }
-        
+
         Server.shared.getStreams(user_id: nil, category_ids: [cate.id], isFeatured: false, page: 1, pageSize: 20, sortBy: "created_at") { [weak self] result in
             guard let _self = self else {return}
             _self.view.stopLoading()
-            switch result  {
+            switch result {
             case .success(let list):
-                
-                let data = list.flatMap{Stream.parse(from:$0)}.filter{$0.id != _self.stream!.id}
-                
+
+                let data = list.flatMap {Stream.parse(from: $0)}.filter {$0.id != _self.stream!.id}
+
                 if data.count == 0 {
                     _self.btnRelated.isHidden = true
                     return
@@ -654,7 +653,7 @@ class InformationStreamController: UIViewController {
                 for item in _self.stackRelatedVideos.arrangedSubviews.reversed() {
                     item.removeFromSuperview()
                 }
-                
+
                 for item in data {
                     let cv = Bundle.main.loadNibNamed("RelatedVideoBlockView", owner: self, options: [:])?.first as! RelatedVideoBlockView
                     cv.load(data: item)
@@ -664,19 +663,19 @@ class InformationStreamController: UIViewController {
                     }
                     _self.stackRelatedVideos.addArrangedSubview(cv)
                     cv.translatesAutoresizingMaskIntoConstraints = false
-                    let width:CGFloat = 120
+                    let width: CGFloat = 120
                     cv.widthAnchor.constraint(equalToConstant: width).isActive = true
                     cv.heightAnchor.constraint(equalToConstant: width * 1.4).isActive = true
                 }
-                
-            case .failure(_):
+
+            case .failure:
                 _self.btnRelated.isHidden = true
                 break
             }
         }
     }
-    
-    private func showControl(isShow:Bool,_ completion:(()->Void)? = nil) {
+
+    private func showControl(isShow: Bool, _ completion: (() -> Void)? = nil) {
         if !vwRelatedVideos.isHidden {
             vwRelatedVideos.transform = .identity
             vwRelatedVideos.isHidden = true
@@ -685,7 +684,7 @@ class InformationStreamController: UIViewController {
             vwMoreAction.transform = .identity
             vwMoreAction.isHidden = true
         }
-        
+
         if isShow {
             UIView.animate(withDuration: 0.3, animations: {
                 self.vwControls.transform = .identity
@@ -694,7 +693,7 @@ class InformationStreamController: UIViewController {
                     completion?()
                 }
             })
-            
+
         } else {
             UIView.animate(withDuration: 0.3, animations: {
                 self.vwControls.transform = CGAffineTransform(translationX: 0, y: self.vwControls.frame.size.height + 40)
@@ -705,12 +704,12 @@ class InformationStreamController: UIViewController {
             })
         }
     }
-    
-    private func showRelatedVideos(isShow:Bool) {
+
+    private func showRelatedVideos(isShow: Bool) {
         if isShow {
             vwRelatedVideos.transform = CGAffineTransform(translationX: 0, y: vwRelatedVideos.frame.size.height + 40)
             vwRelatedVideos.isHidden = false
-            
+
             UIView.animate(withDuration: 0.3, animations: {
                 self.vwControls.transform = CGAffineTransform(translationX: 0, y: 80)
             }, completion: { (done) in
@@ -720,7 +719,7 @@ class InformationStreamController: UIViewController {
                     })
                 }
             })
-            
+
         } else {
             UIView.animate(withDuration: 0.3, animations: {
                 self.vwRelatedVideos.transform = CGAffineTransform(translationX: 0, y: self.vwRelatedVideos.frame.size.height + 40)
@@ -734,12 +733,12 @@ class InformationStreamController: UIViewController {
             })
         }
     }
-    
-    private func showMoreAction(isShow:Bool) {
+
+    private func showMoreAction(isShow: Bool) {
         if isShow {
             vwMoreAction.transform = CGAffineTransform(translationX: 0, y: vwMoreAction.frame.size.height + 40)
             vwMoreAction.isHidden = false
-            
+
             UIView.animate(withDuration: 0.3, animations: {
                 self.vwControls.transform = CGAffineTransform(translationX: 0, y: 80)
             }, completion: { (done) in
@@ -749,7 +748,7 @@ class InformationStreamController: UIViewController {
                     })
                 }
             })
-            
+
         } else {
             UIView.animate(withDuration: 0.3, animations: {
                 self.vwMoreAction.transform = CGAffineTransform(translationX: 0, y: self.vwMoreAction.frame.size.height + 40)
@@ -763,30 +762,29 @@ class InformationStreamController: UIViewController {
             })
         }
     }
-    
+
     private func config() {
-        _ = [btnLike,btnTime,btnViews,btnSendLike,btnComment,btnComment,btnRelated,btnOrder,btnOption].map{setupCommonButton(button: $0)}
-        
+        _ = [btnLike, btnTime, btnViews, btnSendLike, btnComment, btnComment, btnRelated, btnOrder, btnOption].map {setupCommonButton(button: $0)}
+
         // add action for button
         btnSendLike.addTarget(self, action: #selector(touchButton), for: UIControlEvents.touchUpInside)
         btnOrder.addTarget(self, action: #selector(touchButton), for: UIControlEvents.touchUpInside)
         btnOption.addTarget(self, action: #selector(touchButton), for: UIControlEvents.touchUpInside)
         btnComment.addTarget(self, action: #selector(touchButton), for: UIControlEvents.touchUpInside)
         btnRelated.addTarget(self, action: #selector(touchButton), for: UIControlEvents.touchUpInside)
-        
+
         if UIScreen.main.bounds.size.width <= 320 {
             btnSendLike.setImage(#imageLiteral(resourceName: "ic_unlove").resizeImageWith(newSize: CGSize(width: 20, height: 20)).withRenderingMode(.alwaysTemplate).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: .normal)
             btnSendLike.setImage(#imageLiteral(resourceName: "ic_love").resizeImageWith(newSize: CGSize(width: 20, height: 20)).withRenderingMode(.alwaysTemplate).tint(with: #colorLiteral(red: 0.231372549, green: 0.3490196078, blue: 0.5960784314, alpha: 1)), for: .selected)
-            btnSendLike.contentEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5)
+            btnSendLike.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         } else {
             btnSendLike.setImage(#imageLiteral(resourceName: "ic_unlove").resizeImageWith(newSize: CGSize(width: 25, height: 25)).withRenderingMode(.alwaysTemplate).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: .normal)
             btnSendLike.setImage(#imageLiteral(resourceName: "ic_love").resizeImageWith(newSize: CGSize(width: 25, height: 25)).withRenderingMode(.alwaysTemplate).tint(with: #colorLiteral(red: 0.231372549, green: 0.3490196078, blue: 0.5960784314, alpha: 1)), for: .selected)
-            btnSendLike.contentEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
+            btnSendLike.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         }
-        
+
         btnOrder.setImage(UIImage(named: "ic_cart_128")?.tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControlState())
-        
-        
+
         btnViews.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0.7122304137)
         btnLike.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0.7122304137)
         btnSendLike.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0.7122304137)
@@ -794,55 +792,55 @@ class InformationStreamController: UIViewController {
         btnRelated.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0.7122304137)
         btnOption.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0.7122304137)
         btnOrder.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0.7122304137)
-        
-        _ = [btnComment,btnRelated,btnOrder,btnOption].map{resizeImageButton(button: $0)}
-        
+
+        _ = [btnComment, btnRelated, btnOrder, btnOption].map {resizeImageButton(button: $0)}
+
         if let str = self.stream {
             btnOrder.isHidden = str.products.count == 0
             startAnimations()
         }
-        
+
         lblRelatedVideo.textColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         lblRelatedVideo.font = UIFont.boldSystemFont(ofSize: fontSize20)
         lblRelatedVideo.text = "related_videos".localized()
-        
+
         vwRelatedVideos.layer.masksToBounds = true
         vwRelatedVideos.layer.cornerRadius = 5
-        
+
         btnCloseRelatedVideos.addTarget(self, action: #selector(closeRelatedVideo(_:)), for: .touchUpInside)
-        
+
         // more action config
-        
+
         vwMoreAction.layer.masksToBounds = true
         vwMoreAction.layer.cornerRadius = 5
-        
+
         btnUser.setTitleColor(#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: UIControlState())
         btnUser.titleLabel?.font = UIFont.systemFont(ofSize: fontSize17)
         btnUser.setImage(UIImage(named: "ic_profile")?.tint(with: #colorLiteral(red: 0.4588235294, green: 0.4588235294, blue: 0.4588235294, alpha: 1)), for: UIControlState())
-        
+
         btnReport.setTitleColor(#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: UIControlState())
         btnReport.titleLabel?.font = UIFont.systemFont(ofSize: fontSize17)
         btnReport.setImage(#imageLiteral(resourceName: "ic_report").resizeImageWith(newSize: CGSize(width: 25, height: 25)).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControlState())
         btnReport.setTitle("report".localized().capitalizingFirstLetter(), for: UIControlState())
-        
+
         btnUser.setTitleColor(#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: UIControlState())
         btnUser.titleLabel?.font = UIFont.systemFont(ofSize: fontSize17)
-        
+
         btnFollow.setTitleColor(#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: .selected)
-        btnFollow.setTitleColor(#colorLiteral(red: 0.9882352941, green: 0.8078431373, blue: 0.1843137255, alpha: 1), for:.normal)
+        btnFollow.setTitleColor(#colorLiteral(red: 0.9882352941, green: 0.8078431373, blue: 0.1843137255, alpha: 1), for: .normal)
         btnFollow.titleLabel?.font = UIFont.systemFont(ofSize: fontSize15)
         lblActionFollow.font = UIFont.systemFont(ofSize: fontSize15)
-        
+
         lblActionFollow.textColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         lblActionFollow.layer.masksToBounds = true
         lblActionFollow.layer.cornerRadius = 3
         lblActionFollow.layer.borderWidth = 1
         lblActionFollow.layer.borderColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         lblActionFollow.text = "  \("follow".localized().capitalizingFirstLetter())  "
-        
+
         btnFollow.setTitle("follow".localized().capitalizingFirstLetter(), for: .normal)
         btnFollow.setTitle("unfollow".localized().capitalizingFirstLetter(), for: .selected)
-        
+
         btnFollow.layer.masksToBounds = true
         btnFollow.layer.cornerRadius = 3
         btnFollow.layer.borderWidth = 1
@@ -850,19 +848,19 @@ class InformationStreamController: UIViewController {
         loadingFollow.stopAnimating()
         loadingFollow.isHidden = true
         btnFollow.isHidden = true
-        
+
         btnCloseMoreAction.addTarget(self, action: #selector(closeMorAction(_:)), for: .touchUpInside)
-        btnCloseMoreAction.setImage(UIImage(named:"close_preview")?.resizeImageWith(newSize: CGSize(width: 10, height: 10)), for: UIControlState())
+        btnCloseMoreAction.setImage(UIImage(named: "close_preview")?.resizeImageWith(newSize: CGSize(width: 10, height: 10)), for: UIControlState())
         btnFollow.addTarget(self, action: #selector(touchButton(sender:)), for: .touchDown)
         btnReport.addTarget(self, action: #selector(touchButton(sender:)), for: .touchUpInside)
     }
-    
+
     private func startAnimations() {
         if timerAnimation != nil {
             timerAnimation.invalidate()
         }
-        timerAnimation = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { (timer) in
-            let options: UIViewKeyframeAnimationOptions = [.curveLinear,.allowUserInteraction]
+        timerAnimation = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { (_) in
+            let options: UIViewKeyframeAnimationOptions = [.curveLinear, .allowUserInteraction]
             UIView.animateKeyframes(withDuration: 5, delay: 0, options: options, animations: {
                 UIView.addKeyframe(withRelativeStartTime: 0.6, relativeDuration: 0.05, animations: {
                     self.btnOrder.transform = CGAffineTransform(translationX: 2, y: 0)
@@ -900,24 +898,24 @@ class InformationStreamController: UIViewController {
             }, completion: nil)
         }
     }
-    
-    private func resizeImageButton(button:UIButton) {
+
+    private func resizeImageButton(button: UIButton) {
         if let image = button.image(for: UIControlState()) {
             if UIScreen.main.bounds.size.width <= 320 {
                 button.setImage(image.resizeImageWith(newSize: CGSize(width: 20, height: 20)).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControlState())
                 if button.isEqual(btnComment) || button.isEqual(btnRelated) {
-                    button.contentEdgeInsets = UIEdgeInsetsMake(5, 10, 5, 5)
+                    button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 5)
                 } else {
-                    button.contentEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5)
+                    button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
                 }
-                
+
             } else {
                 button.setImage(image.resizeImageWith(newSize: CGSize(width: 25, height: 25)).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControlState())
             }
         }
     }
-    
-    private func setupCommonButton(button:UIButton) {
+
+    private func setupCommonButton(button: UIButton) {
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 4
         if let image = button.image(for: UIControlState()) {
@@ -927,68 +925,66 @@ class InformationStreamController: UIViewController {
         button.setTitleColor(#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: UIControlState())
         button.titleLabel?.font = UIFont.systemFont(ofSize: fontSize15)
     }
-    
-    func keyboardWillChangeFrame(notification:NSNotification) {
+
+    func keyboardWillChangeFrame(notification: NSNotification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
-            var mix:CGFloat = 0
+            var mix: CGFloat = 0
             if let parent = self.parent {
                 if let tabbar = parent.tabBarController {
                     mix = tabbar.tabBar.frame.size.height
                 }
             }
-            if #available(iOS 11.0,*) {
+            if #available(iOS 11.0, *) {
                 heightkeyboard = keyboardRectangle.height - mix - view.safeAreaInsets.bottom
             } else {
                 heightkeyboard = keyboardRectangle.height - mix
             }
         }
     }
-    
-    func keyboardWillShow(notification:NSNotification) {
+
+    func keyboardWillShow(notification: NSNotification) {
     }
-    
-    func keyboardWillHide(notification:NSNotification) {
-        
+
+    func keyboardWillHide(notification: NSNotification) {
+
         view.endEditing(true)
-        
+
     }
-    
-    func getNotificationFromCustom(_ notification:NSNotification) {
+
+    func getNotificationFromCustom(_ notification: NSNotification) {
         showControl(isShow: true)
     }
-    
-    fileprivate func setViewTextFieldMove(isUP:Bool) {
+
+    fileprivate func setViewTextFieldMove(isUP: Bool) {
         view.layoutIfNeeded()
         UIView.animate(withDuration: 0.28) {
             self.view.layoutIfNeeded()
         }
     }
-    
-   
+
     // MARK: - constraint
 
-    
     // MARK: - properties
-    var stream:Stream?
-    var listComment:[String] = []
+    var stream: Stream?
+    var listComment: [String] = []
     var heightkeyboard = kOFFSET_FOR_KEYBOARD
-    var tapgesture:UITapGestureRecognizer!
-    var timerUpdateTimeLive:Timer!
-    var timerCheckSendComment:Timer!
-    var timerAnimation:Timer!
-    var timerCheckIsCheckingOrder:Timer?
-    var listOrders:[Order] = []
-    var isCheckingOrder:Bool = false
-    var isShowingShowcase:Bool = false
-    var timerCheckingShouldStartShowcase:Timer?
-    
+    var tapgesture: UITapGestureRecognizer!
+    var timerUpdateTimeLive: Timer!
+    var timerCheckSendComment: Timer!
+    var timerAnimation: Timer!
+    var timerCheckIsCheckingOrder: Timer?
+    var listOrders: [Order] = []
+    var isCheckingOrder: Bool = false
+    var isShowingShowcase: Bool = false
+    var timerCheckingShouldStartShowcase: Timer?
+
     // MARK: - closure
-    var onShouldClose:(()->Void)?
-    var onShouldPresentMessage:((String)->Void)?
-    var shouldStartShowcase:(()->Bool)?
-    var onReloadOfflineStream:((Stream)->Void)?
-    
+    var onShouldClose: (() -> Void)?
+    var onShouldPresentMessage: ((String) -> Void)?
+    var shouldStartShowcase: (() -> Bool)?
+    var onReloadOfflineStream: ((Stream) -> Void)?
+
     // MARK: - outlet
     @IBOutlet weak var iconClose: UIImageView!
     @IBOutlet weak var btnTime: UIButton!
@@ -1005,13 +1001,12 @@ class InformationStreamController: UIViewController {
     @IBOutlet weak var stackButtons: UIStackView!
     @IBOutlet weak var vwControls: UIView!
     @IBOutlet weak var btnCloseRelatedVideos: UIButton!
-    
-    
+
     // related Videos
     @IBOutlet weak var vwRelatedVideos: UIView!
     @IBOutlet weak var lblRelatedVideo: UILabel!
     @IBOutlet weak var stackRelatedVideos: UIStackView!
-    
+
     // more action
     @IBOutlet weak var vwMoreAction: UIView!
     @IBOutlet weak var btnUser: UIButton!
@@ -1020,15 +1015,15 @@ class InformationStreamController: UIViewController {
     @IBOutlet weak var loadingFollow: UIActivityIndicatorView!
     @IBOutlet weak var btnReport: UIButton!
     @IBOutlet weak var btnCloseMoreAction: UIButton!
-    
+
 }
 
 // MARK: - handle tableview
-extension InformationStreamController:UITableViewDelegate, UITableViewDataSource {
+extension InformationStreamController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! CommentInformationCell
         let cell = UITableViewCell(style: .default, reuseIdentifier: "cell1")
@@ -1043,12 +1038,12 @@ extension InformationStreamController:UITableViewDelegate, UITableViewDataSource
 //                           "Thanks. I'm expecting a call from my lawyer. He's supposed to be sending me some changes to the contracts.",
 //                           "I'll make sure to take a detailed message if he calls. Is there anything you want to tell him?",
 //                           "Well, you could remind him that I'm going to need to come downtown and sign a few papers in front of him. I'll have to set something up for next week."]
-        
-        let name = NSMutableAttributedString(string:"\("Peter Nguyen: ")", attributes: [NSFontAttributeName:UIFont.boldSystemFont(ofSize: fontSize14),NSForegroundColorAttributeName:#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)])
+
+        let name = NSMutableAttributedString(string: "\("Peter Nguyen: ")", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: fontSize14), NSForegroundColorAttributeName: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)])
         let comment = NSMutableAttributedString(string: listComment.reversed()[indexPath.row],
-                                                attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: fontSize14),
-                                                             NSForegroundColorAttributeName:#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)])
-        
+                                                attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: fontSize14),
+                                                             NSForegroundColorAttributeName: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)])
+
         let final = NSMutableAttributedString(attributedString: name)
         final.append(comment)
         cell.textLabel?.attributedText = final
@@ -1057,27 +1052,27 @@ extension InformationStreamController:UITableViewDelegate, UITableViewDataSource
         cell.textLabel?.layer.cornerRadius = 4
         cell.textLabel?.backgroundColor = #colorLiteral(red: 0.4392156899, green: 0.01176470611, blue: 0.1921568662, alpha: 1)
         cell.backgroundColor = UIColor.clear
-        
+
         // flip cell
         cell.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
-        
+
 //        cell.load(listComment[indexPath.row])
-        
+
         return cell
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return listComment.count
     }
 }
 
 // MARK: - handle SelectedOrdeItem delegate
-extension InformationStreamController:SelectOrderItemDelegate {
-    func getUpdatedOrderStream(from vc:SelectOrderItemController) -> Order? {
+extension InformationStreamController: SelectOrderItemDelegate {
+    func getUpdatedOrderStream(from vc: SelectOrderItemController) -> Order? {
         if self.listOrders.count > 0 {
             var order = self.listOrders.last
             for item in stream!.products {
-                for (i,item1) in order!.products.enumerated() {
+                for (i, item1) in order!.products.enumerated() {
                     if item.id == item1.id {
                         var pro = item1
                         pro.noOfSell = item.noOfSell
@@ -1089,7 +1084,7 @@ extension InformationStreamController:SelectOrderItemDelegate {
             return order
         } else {
             for item in stream!.products {
-                for (i,item1) in vc.order!.products.enumerated() {
+                for (i, item1) in vc.order!.products.enumerated() {
                     if item.id == item1.id {
                         var pro = item1
                         pro.noOfSell = item.noOfSell
@@ -1104,7 +1099,7 @@ extension InformationStreamController:SelectOrderItemDelegate {
 }
 
 // MARK: - handle textfield
-//extension InformationStreamController: UITextFieldDelegate {
+// extension InformationStreamController: UITextFieldDelegate {
 //
 //    func textFieldDidBeginEditing(_ textField: UITextField) {
 //        if bottomConstraintvwTextField.constant == 0 {
@@ -1132,11 +1127,11 @@ extension InformationStreamController:SelectOrderItemDelegate {
 //        }
 //        return true
 //    }
-//}
+// }
 
 // MARK: - ShowCase
 extension InformationStreamController: MaterialShowcaseDelegate {
-    
+
     func checkNextTutorial() {
         return
         isShowingShowcase = true
@@ -1144,9 +1139,9 @@ extension InformationStreamController: MaterialShowcaseDelegate {
             startTutorial()
         }
     }
-    
+
     // MARK: - init showcase
-    func startTutorial(_ step:Int = 1) {
+    func startTutorial(_ step: Int = 1) {
         // showcase
         configShowcase(MaterialShowcase(), step) { showcase, shouldShow in
             if shouldShow {
@@ -1155,23 +1150,23 @@ extension InformationStreamController: MaterialShowcaseDelegate {
             }
         }
     }
-    
-    func configShowcase(_ showcase:MaterialShowcase,_ step:Int = 1,_ shouldShow:((MaterialShowcase,Bool)->Void)) {
+
+    func configShowcase(_ showcase: MaterialShowcase, _ step: Int = 1, _ shouldShow: ((MaterialShowcase, Bool) -> Void)) {
         if step == 1 {
             showcase.setTargetView(view: self.btnOrder, #colorLiteral(red: 0.9019607843, green: 0.768627451, blue: 0, alpha: 1))
             showcase.primaryText = ""
             showcase.identifier = ORDER_BUTTON_STREAM
             showcase.secondaryText = "click_here_go_to_list_products_page".localized().capitalizingFirstLetter()
-            shouldShow(showcase,true)
+            shouldShow(showcase, true)
         } else {
-            shouldShow(showcase,false)
+            shouldShow(showcase, false)
             if step > 1 {
                 AppConfig.showCase.setFinishShowcase(key: VIEW_STREAM_SCENE)
                 checkNextTutorial()
             }
         }
     }
-    
+
     // MARK: - showcase delegate
     func showCaseDidDismiss(showcase: MaterialShowcase) {
         if let step = showcase.identifier {
@@ -1180,6 +1175,6 @@ extension InformationStreamController: MaterialShowcaseDelegate {
                 startTutorial(ss)
             }
         }
-        
+
     }
 }

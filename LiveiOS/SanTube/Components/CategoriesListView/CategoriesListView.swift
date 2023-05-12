@@ -18,34 +18,34 @@ class CategoriesListView: UIView {
     @IBOutlet weak var stackRowTwo: UIStackView!
     @IBOutlet weak var lblCate: UILabel!
     @IBOutlet weak var vwTitle: UIView!
-    
+
     // MARK: - constraint
     @IBOutlet weak var constraintHeightTitle: NSLayoutConstraint!
-    
+
     // MARK: - properties
-    var listCategories:[Category] = []
-    
+    var listCategories: [Category] = []
+
     // MARK: - closure
-    var onSelectCategory:((Category)->Void)?
-    var onBack:(()->Void)?
-    
+    var onSelectCategory: ((Category) -> Void)?
+    var onBack: (() -> Void)?
+
     // MARK: - init
     override func awakeFromNib() {
         super.awakeFromNib()
-        
+
         configText()
         configView()
     }
-    
+
     // MARK: - interface
-    func load(_ cates:[Category]) {
+    func load(_ cates: [Category]) {
         self.listCategories = cates
         loadData()
     }
-    
-    func hideList(isHide:Bool,_ scrollView:UIScrollView) {
-        
-        if scrollViewOne.isHidden != isHide && scrollViewTwo.isHidden != isHide{
+
+    func hideList(isHide: Bool, _ scrollView: UIScrollView) {
+
+        if scrollViewOne.isHidden != isHide && scrollViewTwo.isHidden != isHide {
             self.setNeedsLayout()
             UIView.animate(withDuration: 0.25, animations: {
                 self.scrollViewOne.isHidden = isHide
@@ -59,14 +59,14 @@ class CategoriesListView: UIView {
             })
         }
     }
-    
+
     // MARK: - button event
     @IBAction func touchButton(_ sender: Any) {
         self.onBack?()
     }
-    
+
     // MARK: - interface
-    func setSelect(index:Int) {
+    func setSelect(index: Int) {
         if index < 0 || index > self.listCategories.count-1 || self.listCategories.count == 0 {return}
         let cate = self.listCategories[index]
         var i = 0
@@ -74,22 +74,22 @@ class CategoriesListView: UIView {
             ($0 as! CategoryView).isfocus(i == index)
             i += 1
         }
-        
+
         _ = stackRowTwo.arrangedSubviews.map {
             ($0 as! CategoryView).isfocus(i == index)
             i += 1
         }
-        
+
         self.selectCategory(cate: cate)
     }
-    
+
     // MARK: - private
     func loadData() {
-        _ = stackRowOne.arrangedSubviews.map{$0.removeFromSuperview()}
-        _ = stackRowTwo.arrangedSubviews.map{$0.removeFromSuperview()}
-        let maxItem:CGFloat = 4
+        _ = stackRowOne.arrangedSubviews.map {$0.removeFromSuperview()}
+        _ = stackRowTwo.arrangedSubviews.map {$0.removeFromSuperview()}
+        let maxItem: CGFloat = 4
         let maxWidth = (UIScreen.main.bounds.size.width / maxItem)
-        for (i,item) in self.listCategories.enumerated() {
+        for (i, item) in self.listCategories.enumerated() {
             let view = Bundle.main.loadNibNamed("CategoryView", owner: self, options: [:])?.first as! CategoryView
             view.load(item)
             view.tag = i
@@ -105,30 +105,30 @@ class CategoriesListView: UIView {
 //            let height = view.heightAnchor.constraint(equalToConstant: 55)
 //            height.priority = 750
 //            view.addConstraint(height)
-            
+
             // action from subview
-            view.onSelectCategory = {[weak self] cate,index in
+            view.onSelectCategory = {[weak self] _, index in
                 guard let _self = self else {return}
                 _self.setSelect(index: index)
             }
         }
     }
-    
-    func selectCategory(cate:Category) {
+
+    func selectCategory(cate: Category) {
         self.lblCate.text = cate.name
         self.onSelectCategory?(cate)
     }
-    
+
     func configView() {
         lblCate.font = UIFont.boldSystemFont(ofSize: fontSize18)
         lblCate.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
     }
-    
+
     func configText() {
-        
+
     }
-    
-    func configTitle(_ label:UILabel) {
+
+    func configTitle(_ label: UILabel) {
         label.font = UIFont.boldSystemFont(ofSize: fontSize24)
         label.textColor = #colorLiteral(red: 0.631372549, green: 0.631372549, blue: 0.631372549, alpha: 1)
     }

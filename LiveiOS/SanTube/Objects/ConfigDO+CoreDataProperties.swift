@@ -10,7 +10,6 @@
 import Foundation
 import CoreData
 
-
 extension ConfigDO {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<ConfigDO> {

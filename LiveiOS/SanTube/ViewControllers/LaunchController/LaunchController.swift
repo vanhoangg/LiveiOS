@@ -14,14 +14,14 @@ class LaunchController: UIViewController {
 
     // MARK: - outlet
     @IBOutlet weak var indicator: UIActivityIndicatorView!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         indicator.startAnimating()
         nextStep()
     }
-    
+
     // MARK: - private
     func nextStep() {
         // check if user not login yet
@@ -54,14 +54,14 @@ class LaunchController: UIViewController {
                 }
  */
             } else {
-                
+
                 // remove order mark deleted
                 if let order = Support.orderDeleted.getOrderDeleted() {
                     Server.shared.changeStatusOrder(orderIds: [order.id],
-                                                    status: AppConfig.status.order.delete()) {(order, err) in
+                                                    status: AppConfig.status.order.delete()) {(_, _) in
                     }
                 }
-                
+
                 // get config
                 Server.shared.getConfig {[weak self] _ in
                     guard let _self = self else {return}
@@ -74,19 +74,19 @@ class LaunchController: UIViewController {
                             if let orders = json["orders"] as? JSON {
                                 AppConfig.status.order.save(data: orders)
                             }
-                            
+
                             if let stream = json["streams"] as? JSON {
                                 AppConfig.status.stream.save(data: stream)
                             }
-                            
+
                             if let stream = json["products"] as? JSON {
                                 AppConfig.status.product.save(data: stream)
                             }
-                            
+
                             if let stream = json["users"] as? JSON {
                                 AppConfig.status.user.save(data: stream)
                             }
-                            
+
                             // get categories
                             _self.indicator.stopAnimating()
                             AppConfig.navigation.ifNotHaveMarkFaviousCategories()
@@ -95,16 +95,15 @@ class LaunchController: UIViewController {
                         }
                     })
                 }
-                
+
             }
         } else {
             // change to quick login
-            
+
             let vc = AuthenticController(nibName: "AuthenticController", bundle: Bundle.main)
             let nv = UINavigationController(rootViewController: vc)
             AppConfig.navigation.changeRootControllerTo(viewcontroller: nv)
-            
-            
+
             /*
             Server.shared.loginGuest { [weak self] err in
                 guard let _self = self else {return}
@@ -130,16 +129,16 @@ class LaunchController: UIViewController {
 */
         }
     }
-    
+
     private func showError() {
         let actionSheetController: UIAlertController = UIAlertController(title: "error".localized().capitalized, message: "service_unavailable".localized() + ": api::allstatus", preferredStyle: .alert)
-        let cancelAction: UIAlertAction = UIAlertAction(title: "OK", style: .cancel) { action -> Void in
-            //Just dismiss the action sheet
+        let cancelAction: UIAlertAction = UIAlertAction(title: "OK", style: .cancel) { _ -> Void in
+            // Just dismiss the action sheet
         }
         actionSheetController.addAction(cancelAction)
         self.present(actionSheetController, animated: true, completion: nil)
     }
-    
+
     deinit {
         print("LauchController deinit")
     }

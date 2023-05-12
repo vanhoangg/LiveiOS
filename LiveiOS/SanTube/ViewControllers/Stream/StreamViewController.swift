@@ -9,33 +9,32 @@
 import UIKit
 
 class StreamViewController: BaseController {
-    
+
     // MARK: - outlet
     @IBOutlet weak var previewView: UIView!
     @IBOutlet weak var statusLabel: UILabel!
-    
+
     // MARK: - properties
      var player: IJKFFMoviePlayerController!
     var stream: Stream!
-    var isUpdatedViews:Bool = false
-    var streamVideoController:PresentVideoController!
+    var isUpdatedViews: Bool = false
+    var streamVideoController: PresentVideoController!
     var isGoDirect = true // check if presentVideoController has parent then this view dont called direct then set stream and start play
-    var timerCheckingStatus:Timer? // check status stream every 30 seconds. in Case stream stop, notice user
-    
+    var timerCheckingStatus: Timer? // check status stream every 30 seconds. in Case stream stop, notice user
+
     // MARK: - closures
-    var onViewDidLoad:(()->Void)?
-    var onGotoStreamDetail:((Stream)->Void)?
-    
-    
+    var onViewDidLoad: (() -> Void)?
+    var onGotoStreamDetail: ((Stream) -> Void)?
+
     // MARK: - api
     func forceCloseStreamAndQuickView() {
         onDissmiss?()
         self.dismiss(animated: false, completion: nil)
     }
-    
+
     // MARK: - private
-    private func loadStream(stream:Stream, vc: PresentVideoController) {
-        
+    private func loadStream(stream: Stream, vc: PresentVideoController) {
+
         if vc.parent != nil {
             isGoDirect = false
             vc.view.removeFromSuperview()
@@ -54,10 +53,10 @@ class StreamViewController: BaseController {
             streamVideoController = vc
             vc.stream = stream
             vc.playStream()
-            
+
             startCheckStatus()
         }
-        
+
         // add information controller to view stream
         let vc1 = InformationStreamController(nibName: "InformationStreamController", bundle: Bundle.main)
         vc1.stream = self.stream
@@ -82,14 +81,14 @@ class StreamViewController: BaseController {
 //            }
 //        }
     }
-    
+
     private func startCheckStatus() {
         self.removeAllTimers()
         if stream == nil {return}
         Timer.scheduledTimer(withTimeInterval: 10, repeats: false, block: {[weak self] timer in
             timer.invalidate()
             guard let _self = self else {return}
-            Server.shared.getStream(streamId: _self.stream.id) {[weak _self] str, err in
+            Server.shared.getStream(streamId: _self.stream.id) {[weak _self] str, _ in
                 guard let __self = _self else {return}
                 if let strea = str {
                     print("RESULT STATUS FOR STREAM: \(strea.id) is \(strea.status) - \(strea.offlineURL)")
@@ -99,12 +98,12 @@ class StreamViewController: BaseController {
                 }
             }
         })
-        
-        timerCheckingStatus = Timer.scheduledTimer(withTimeInterval: 30, repeats: true, block: {[weak self] timer in
+
+        timerCheckingStatus = Timer.scheduledTimer(withTimeInterval: 30, repeats: true, block: {[weak self] _ in
             guard let _self = self else {return}
             print("START CHECKING STATUS FOR STREAM: \(_self.stream.id)")
             // get status again of stream, sure video is streaming else back and go to detail stream offline
-            Server.shared.getStream(streamId: _self.stream.id) {[weak _self] str, err in
+            Server.shared.getStream(streamId: _self.stream.id) {[weak _self] str, _ in
                 guard let __self = _self else {return}
                 if let strea = str {
                     print("RESULT STATUS FOR STREAM: \(strea.id) is \(strea.status) - \(strea.offlineURL)")
@@ -116,15 +115,15 @@ class StreamViewController: BaseController {
             }
         })
     }
-    
-    private func notice(_ strea:Stream) {
+
+    private func notice(_ strea: Stream) {
         let ac = UIAlertController(title: "notice".localized().capitalizingFirstLetter(), message: "notice_stream_has_stopped".localized().capitalizingFirstLetter(), preferredStyle: .alert)
-        ac.addAction(UIAlertAction(title: "exit".localized().capitalizingFirstLetter(), style: .cancel, handler: {[weak self] action in
+        ac.addAction(UIAlertAction(title: "exit".localized().capitalizingFirstLetter(), style: .cancel, handler: {[weak self] _ in
             guard let _self = self else {return}
             _self.closeStream(isForce: false)
             _self.dismiss(animated: false, completion: nil)
         }))
-        ac.addAction(UIAlertAction(title: "detail".localized().capitalizingFirstLetter(), style: .default, handler: {[weak self] action in
+        ac.addAction(UIAlertAction(title: "detail".localized().capitalizingFirstLetter(), style: .default, handler: {[weak self] _ in
             guard let _self = self else {return}
             _self.closeStream(isForce: false)
             _self.onGotoStreamDetail?(strea)
@@ -132,13 +131,13 @@ class StreamViewController: BaseController {
         }))
         present(ac, animated: true)
     }
-    
+
     private func removeAllTimers() {
         timerCheckingStatus?.invalidate()
         timerCheckingStatus = nil
     }
-    
-    private func closeStream(isForce:Bool) {
+
+    private func closeStream(isForce: Bool) {
         if isGoDirect {
             streamVideoController?.stopPlay()
         }
@@ -147,32 +146,32 @@ class StreamViewController: BaseController {
             onDissmiss?()
         }
     }
-    
+
     // MARK: - init
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         onViewDidLoad = {[weak self] in
             guard let _self = self else {return}
             _self.loadStream(stream: _self.stream, vc: _self.streamVideoController)
         }
-        
+
         onViewDidLoad?()
     }
-    
+
     deinit {
         self.removeAllTimers()
         if let strController =  streamVideoController {
             strController.forceOpenPlayBackControl = false
-            strController.onTurnOffStream?(stream,strController)
+            strController.onTurnOffStream?(stream, strController)
         }
     }
-    
+
     @IBAction func closeButtonPressed(_ sender: AnyObject) {
         self.dismiss(animated: true, completion: nil)
     }
-    
-    override var preferredStatusBarStyle : UIStatusBarStyle {
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
 }

@@ -13,11 +13,10 @@ protocol FilterViewDelegate: class {
 }
 class FilterVideoList: UIView {
 
-
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var scrollview: UIScrollView!
     weak var delegate: FilterViewDelegate?
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
@@ -26,11 +25,11 @@ class FilterVideoList: UIView {
         super.init(coder: aDecoder)
         commonInit()
     }
-    private func commonInit(){
+    private func commonInit() {
         Bundle.main.loadNibNamed("FilterVideoList", owner: self, options: nil)
         addSubview(contentView)
         contentView.frame = self.bounds
-        contentView.autoresizingMask = [.flexibleWidth,.flexibleHeight]
+        contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     }
     @IBAction func actionFilterChoise(_ sender: UIButton) {
         delegate?.onChooseFilter(sender.tag)

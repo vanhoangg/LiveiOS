@@ -15,11 +15,11 @@ enum UIViewCustomBorderType {
     case bottom
 }
 
-class UIViewCustomBorder:UIView {
+class UIViewCustomBorder: UIView {
     var type: [UIViewCustomBorderType] = [.left, .right, .bottom, .top]
-    var color:String = "0xFCCE2F"
-    var lineWidth:CGFloat = 2
-    init(frame: CGRect,_ type:[UIViewCustomBorderType],_ color:String? = nil,_ lineWidth:CGFloat? = 2) {
+    var color: String = "0xFCCE2F"
+    var lineWidth: CGFloat = 2
+    init(frame: CGRect, _ type: [UIViewCustomBorderType], _ color: String? = nil, _ lineWidth: CGFloat? = 2) {
         super.init(frame: frame)
         self.type = type
         if let cl = color {
@@ -29,16 +29,16 @@ class UIViewCustomBorder:UIView {
             self.lineWidth = cl
         }
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         backgroundColor = UIColor.clear
         layer.masksToBounds = false
-        
+
         if self.bounds.width <= 0 || self.bounds.height <= 0 {
             return
         }
@@ -49,61 +49,61 @@ class UIViewCustomBorder:UIView {
                 }
             }
         }
-        
+
         for t in self.type {
             if t == .left {
-                let leftPath:UIBezierPath = UIBezierPath()
+                let leftPath: UIBezierPath = UIBezierPath()
                 leftPath.move(to: CGPoint(x: 0, y: 0 ))
                 leftPath.addLine(to: CGPoint(x: 0, y: self.bounds.maxY))
-                
-                let leftLayer:CAShapeLayer = CAShapeLayer()
+
+                let leftLayer: CAShapeLayer = CAShapeLayer()
                 leftLayer.lineWidth = lineWidth
-                leftLayer.position = CGPoint(x:0,y:0)
+                leftLayer.position = CGPoint(x: 0, y: 0)
                 leftLayer.path = leftPath.cgPath
-                leftLayer.strokeColor = UIColor(hex:self.color).cgColor
-                leftLayer.fillColor = nil;
+                leftLayer.strokeColor = UIColor(hex: self.color).cgColor
+                leftLayer.fillColor = nil
                 self.layer.addSublayer(leftLayer)
             }
-            
+
             if t == .right {
-                let leftPath:UIBezierPath = UIBezierPath()
+                let leftPath: UIBezierPath = UIBezierPath()
                 leftPath.move(to: CGPoint(x: self.bounds.maxX, y: 0 ))
                 leftPath.addLine(to: CGPoint(x: self.bounds.maxX, y: self.bounds.maxY))
-                
-                let leftLayer:CAShapeLayer = CAShapeLayer()
+
+                let leftLayer: CAShapeLayer = CAShapeLayer()
                 leftLayer.lineWidth = lineWidth
-                leftLayer.position = CGPoint(x:0,y:0)
+                leftLayer.position = CGPoint(x: 0, y: 0)
                 leftLayer.path = leftPath.cgPath
-                leftLayer.strokeColor = UIColor(hex:self.color).cgColor
-                leftLayer.fillColor = nil;
+                leftLayer.strokeColor = UIColor(hex: self.color).cgColor
+                leftLayer.fillColor = nil
                 self.layer.addSublayer(leftLayer)
             }
-            
+
             if t == .bottom {
-                let bottomPath:UIBezierPath = UIBezierPath()
+                let bottomPath: UIBezierPath = UIBezierPath()
                 bottomPath.move(to: CGPoint(x: 0, y: self.bounds.maxY))
                 bottomPath.addLine(to: CGPoint(x: self.bounds.maxX, y: self.bounds.maxY))
-                
-                let BottomLayer:CAShapeLayer = CAShapeLayer()
+
+                let BottomLayer: CAShapeLayer = CAShapeLayer()
                 BottomLayer.lineWidth = lineWidth
-                BottomLayer.position = CGPoint(x:0,y:0)
+                BottomLayer.position = CGPoint(x: 0, y: 0)
                 BottomLayer.path = bottomPath.cgPath
-                BottomLayer.strokeColor = UIColor(hex:self.color).cgColor
-                BottomLayer.fillColor = nil;
+                BottomLayer.strokeColor = UIColor(hex: self.color).cgColor
+                BottomLayer.fillColor = nil
                 self.layer.addSublayer(BottomLayer)
             }
-            
+
             if t == .top {
-                let bottomPath:UIBezierPath = UIBezierPath()
+                let bottomPath: UIBezierPath = UIBezierPath()
                 bottomPath.move(to: CGPoint(x: 0, y: 0))
                 bottomPath.addLine(to: CGPoint(x: self.bounds.maxX, y: 0))
-                
-                let BottomLayer:CAShapeLayer = CAShapeLayer()
+
+                let BottomLayer: CAShapeLayer = CAShapeLayer()
                 BottomLayer.lineWidth = lineWidth
-                BottomLayer.position = CGPoint(x:0,y:0)
+                BottomLayer.position = CGPoint(x: 0, y: 0)
                 BottomLayer.path = bottomPath.cgPath
-                BottomLayer.strokeColor = UIColor(hex:self.color).cgColor
-                BottomLayer.fillColor = nil;
+                BottomLayer.strokeColor = UIColor(hex: self.color).cgColor
+                BottomLayer.fillColor = nil
                 self.layer.addSublayer(BottomLayer)
             }
         }

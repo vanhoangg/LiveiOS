@@ -13,13 +13,13 @@ import AVKit
 
 // MARK: - STRING
 extension String {
-    
-    func getListSub(patterns:[String]) -> [String] {
-        var matchResults:[String] = []
+
+    func getListSub(patterns: [String]) -> [String] {
+        var matchResults: [String] = []
         for pattern in patterns {
             if let regex = try? NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options.caseInsensitive) {
-                let uls = regex.matches(in: self, options: NSRegularExpression.MatchingOptions.init(rawValue: 0), range: NSMakeRange(0, self.characters.count))
-                
+                let uls = regex.matches(in: self, options: NSRegularExpression.MatchingOptions.init(rawValue: 0), range: NSRange(location: 0, length: self.characters.count))
+
                 for match in uls {
                     matchResults.append((self as NSString).substring(with: match.range))
                 }
@@ -27,19 +27,19 @@ extension String {
         }
         return matchResults
     }
-    
-    func trim(pattern:[String]) -> String {
-        var temp:String = self
+
+    func trim(pattern: [String]) -> String {
+        var temp: String = self
         for p in pattern {
             temp = temp.replacingOccurrences(of: p, with: "", options: .regularExpression)
         }
         return temp
     }
-    
+
     func removeScript() -> String {
         return self.trim(pattern: ["</(.*)>", "<(.*)/>"])
     }
-    
+
     func isValidEmail() -> Bool {
         var returnValue = true
         let emailRegEx = "(?:[\\p{L}0-9!#$%\\&'*+/=?\\^_`{|}~-]+(?:\\.[\\p{L}0-9!#$%\\&'*+/=?\\^_`{|}" +
@@ -49,28 +49,27 @@ extension String {
             "]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-" +
             "9][0-9]?|[\\p{L}0-9-]*[\\p{L}0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21" +
         "-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
-        
+
         do {
             let regex = try NSRegularExpression(pattern: emailRegEx)
             let nsString = self as NSString
             let results = regex.matches(in: self, range: NSRange(location: 0, length: nsString.length))
-            
-            if results.count == 0
-            {
+
+            if results.count == 0 {
                 returnValue = false
             }
-            
+
         } catch let error as NSError {
             print("invalid regex: \(error.localizedDescription)")
             returnValue = false
         }
-        
+
         return  returnValue
     }
-    
+
     func isValidPassword() -> Bool {
         var returnValue = true
-        if(self.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines).characters.count < 6 || self.getListSub(patterns: ["</(.*)>", "<(.*)/>"]).count > 0){
+        if self.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines).characters.count < 6 || self.getListSub(patterns: ["</(.*)>", "<(.*)/>"]).count > 0 {
             returnValue = false
         }
         if (self as NSString).substring(to: 0) == " " {
@@ -78,20 +77,20 @@ extension String {
         }
         return returnValue
     }
-        
+
     func capitalizingFirstLetter() -> String {
         let first = String(characters.prefix(1)).capitalized
         let other = String(characters.dropFirst())
         return first + other
     }
-    
+
     mutating func capitalizeFirstLetter() {
         self = self.capitalizingFirstLetter()
     }
-    
-    func convertToJSON() -> JSON{
+
+    func convertToJSON() -> JSON {
         if let data = self.data(using: String.Encoding.utf8) {
-            
+
             do {
                 if let dictonary: JSON = try JSONSerialization.jsonObject(with: data, options: []) as? JSON {
                     return dictonary
@@ -103,90 +102,89 @@ extension String {
         }
         return [:]
     }
-    
-    func toDate2() -> Date{
+
+    func toDate2() -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
         return dateFormatter.date(from: self) ?? Date.init(timeIntervalSinceNow: 0)
     }
-    
-    func toDate3() -> Date{
+
+    func toDate3() -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
         return dateFormatter.date(from: self) ?? Date.init(timeIntervalSinceNow: 0)
     }
-    
-    func localToUTC(format:String) -> String {
+
+    func localToUTC(format: String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         dateFormatter.calendar = NSCalendar.current
         dateFormatter.timeZone = TimeZone.current
-        
+
         let dt = dateFormatter.date(from: self)
         dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
         dateFormatter.dateFormat = format
-        
+
         return dateFormatter.string(from: dt!)
     }
-    
-    func UTCToLocal(format:String) -> String {
+
+    func UTCToLocal(format: String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
         let dt = dateFormatter.date(from: self)
-        
+
         let dateFormatter1 = DateFormatter()
         dateFormatter1.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter1.dateFormat = format
         dateFormatter1.timeZone = TimeZone.current
         return dateFormatter1.string(from: dt!)
     }
-    
-    
+
     /// Create QRCode Image
     ///
     /// - Parameter size: size QR Image
     /// - Returns: optional image
-    func createQRCodeImage(_ size:CGSize = CGSize(width: 115, height: 115)) -> UIImage? {
-        
+    func createQRCodeImage(_ size: CGSize = CGSize(width: 115, height: 115)) -> UIImage? {
+
         if self.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines).characters.count == 0 {
             return nil
         }
-        
-        let defaultSize:CGFloat = 23
+
+        let defaultSize: CGFloat = 23
         var sz = size
         if sz.width < defaultSize {
             sz.width = defaultSize
         }
-        
+
         if sz.height < defaultSize {
             sz.height = defaultSize
         }
-        
-        let data = self.data(using:String.Encoding.isoLatin1, allowLossyConversion: false)
-        
+
+        let data = self.data(using: String.Encoding.isoLatin1, allowLossyConversion: false)
+
         let filter = CIFilter(name: "CIQRCodeGenerator")
         filter!.setValue(data, forKey: "inputMessage")
         filter!.setValue("Q", forKey: "inputCorrectionLevel")
-        
+
         let transform = CGAffineTransform(scaleX: sz.width/defaultSize, y: sz.width/defaultSize)
-        
+
         if let output = filter!.outputImage?.applying(transform) {
             return UIImage(ciImage: output)
         }
-        return UIImage(ciImage:filter!.outputImage!)
+        return UIImage(ciImage: filter!.outputImage!)
     }
-    
-    func stringByAddHtml(_ font:UIFont? = nil,
-                         _ completion:@escaping ((NSAttributedString?)->Void)) {
+
+    func stringByAddHtml(_ font: UIFont? = nil,
+                         _ completion: @escaping ((NSAttributedString?) -> Void)) {
         DispatchQueue.global().async {
-            
+
             if let data = "<html><head><style type='text/css'>body {font-size:\(fontSize16); color:#ffffff; font-family:'\(UIFont.systemFont(ofSize: fontSize16).familyName)'} a {color:#e6c400;text-decoration: none;}</style></head><body>\(self)</body></html>".data(using: String.Encoding.utf8, allowLossyConversion: true) {
                 if let result =  try? NSAttributedString(data: data,
-                                                         options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType],
+                                                         options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType],
                                                          documentAttributes: nil) {
                     DispatchQueue.main.async {
                         completion(result)
@@ -207,17 +205,17 @@ extension String {
 }
 
 // MARK: - IMAGEVIEW
-private var KeepTap:String = "KeepTap"
-private var KeepTapEvent:String = "KeepTapEvent"
-private var BLURMASK:String = "BLURMASK"
+private var KeepTap: String = "KeepTap"
+private var KeepTapEvent: String = "KeepTapEvent"
+private var BLURMASK: String = "BLURMASK"
 let imageCache = NSCache<NSString, UIImage>()
 extension UIImageView {
-    func loadImageUsingCacheWithURLString(_ URLString: String, size:CGSize? = nil, placeHolder: UIImage? = nil,_ loadCached:Bool = true,_ onComplete:((UIImage?)->Void)? = nil){
-        
+    func loadImageUsingCacheWithURLString(_ URLString: String, size: CGSize? = nil, placeHolder: UIImage? = nil, _ loadCached: Bool = true, _ onComplete: ((UIImage?) -> Void)? = nil) {
+
         self.startAnimating()
-        
+
         self.image = placeHolder
-        
+
         if let cachedImage = imageCache.object(forKey: NSString(string: URLString)) {
             if loadCached {
                 self.image = cachedImage
@@ -226,11 +224,11 @@ extension UIImageView {
                 return
             }
         }
-        
+
         if let url = URL(string: URLString) {
-            URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
-                
-                //print("RESPONSE FROM API: \(response)")
+            URLSession.shared.dataTask(with: url, completionHandler: { (data, _, error) in
+
+                // print("RESPONSE FROM API: \(response)")
                 if error != nil {
                     if let er = error {
                         print("ERROR LOADING IMAGES FROM URL: \(er)")
@@ -242,7 +240,7 @@ extension UIImageView {
                 }
                     if let data = data {
                         if let downloadedImage = UIImage(data: data) {
-                            
+
                             if let s = size {
                                 let imgScale = downloadedImage.resizeImageWith(newSize: s)
                                 if let imageData = UIImageJPEGRepresentation(imgScale, 0.7) {
@@ -272,9 +270,9 @@ extension UIImageView {
             onComplete?(self.image)
         }
     }
-    
+
     // use for mark favourite categories
-    func addMask(color:UIColor,_ alpha:CGFloat = 1,_ removeIconCheck:Bool = false) {
+    func addMask(color: UIColor, _ alpha: CGFloat = 1, _ removeIconCheck: Bool = false) {
         let mask = UIView(frame: self.bounds)
         if !removeIconCheck {
             let imv = UIImageView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
@@ -295,12 +293,12 @@ extension UIImageView {
         mask.bottomAnchor.constraint(equalTo: mask.superview!.bottomAnchor, constant: 0).isActive = true
         mask.leadingAnchor.constraint(equalTo: mask.superview!.leadingAnchor, constant: 0).isActive = true
     }
-    
+
     func removeMask() {
-        _ = self.subviews.reversed().map{if $0.tag == 9989 {$0.removeFromSuperview()}}
+        _ = self.subviews.reversed().map {if $0.tag == 9989 {$0.removeFromSuperview()}}
     }
-    
-    func blur(position:[String]? = ["bottom"]) {
+
+    func blur(position: [String]? = ["bottom"]) {
         removeBlur()
         let blur = CAGradientLayer()
         var rect = self.bounds
@@ -309,17 +307,17 @@ extension UIImageView {
         blur.frame = rect
         let transWhiteColor = UIColor.black.withAlphaComponent(0).cgColor
         let endColor = UIColor.black.withAlphaComponent(0.5).cgColor
-        blur.colors = [transWhiteColor,endColor]
+        blur.colors = [transWhiteColor, endColor]
         layer.insertSublayer(blur, at: 0)
         objc_setAssociatedObject(self, &BLURMASK, blur, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
-    
+
     func removeBlur() {
         if let layer = objc_getAssociatedObject(self, &BLURMASK) as? CAGradientLayer {
             layer.removeFromSuperlayer()
         }
     }
-    
+
     open override func layoutSubviews() {
         super.layoutSubviews()
         if let layer = objc_getAssociatedObject(self, &BLURMASK) as? CAGradientLayer {
@@ -332,10 +330,10 @@ extension UIImageView {
 }
 
 class UIImageViewRound: UIImageView {
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
-        
+
         layer.cornerRadius = frame.size.width/2
         layer.masksToBounds = true
     }
@@ -350,16 +348,16 @@ public extension UIImage {
         UIRectFill(rect)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        
+
         guard let cgImage = image?.cgImage else { return nil }
         self.init(cgImage: cgImage)
     }
-    
+
     func resizeImageWith(newSize: CGSize) -> UIImage {
-        
+
         let horizontalRatio = newSize.width / size.width
         let verticalRatio = newSize.height / size.height
-        
+
         let ratio = max(horizontalRatio, verticalRatio)
         let newSize = CGSize(width: size.width * ratio, height: size.height * ratio)
         UIGraphicsBeginImageContextWithOptions(newSize, false, 0)
@@ -368,44 +366,44 @@ public extension UIImage {
         UIGraphicsEndImageContext()
         return newImage!
     }
-    
+
     func maskRoundedImage(radius: CGFloat) -> UIImage {
-        let width = min(self.size.width,self.size.height)
+        let width = min(self.size.width, self.size.height)
         let imageView: UIImageView = UIImageView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: width)))
         imageView.contentMode = .scaleAspectFill
         imageView.image = self
         let layer = imageView.layer
         layer.masksToBounds = true
         layer.cornerRadius = self.size.width/2
-        UIGraphicsBeginImageContextWithOptions(imageView.bounds.size,false, UIScreen.main.scale)
+        UIGraphicsBeginImageContextWithOptions(imageView.bounds.size, false, UIScreen.main.scale)
         layer.render(in: UIGraphicsGetCurrentContext()!)
         let roundedImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return roundedImage!
     }
-    
+
     func tint(with color: UIColor) -> UIImage {
         var image = withRenderingMode(.alwaysTemplate)
         UIGraphicsBeginImageContextWithOptions(size, false, scale)
         color.set()
-        
+
         image.draw(in: CGRect(origin: .zero, size: size))
         image = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         return image
     }
-    
+
     static func textToImage(drawText text: String, inImage image: UIImage, atPoint point: CGPoint? = nil) -> UIImage {
         let textColor = UIColor.red
         let textFont = UIFont.boldSystemFont(ofSize: 12)
-        
+
         let scale = UIScreen.main.scale
         UIGraphicsBeginImageContextWithOptions(image.size, false, scale)
-        
+
         let textFontAttributes = [
             NSFontAttributeName: textFont,
-            NSForegroundColorAttributeName: textColor,
-            ] as [String : Any]
+            NSForegroundColorAttributeName: textColor
+            ] as [String: Any]
         image.draw(in: CGRect(origin: CGPoint.zero, size: image.size))
         var p = CGPoint.zero
         if let pp = point {
@@ -413,13 +411,13 @@ public extension UIImage {
         }
         let rect = CGRect(origin: p, size: image.size)
         text.draw(in: rect, withAttributes: textFontAttributes)
-        
+
         let newImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        
+
         return newImage!
     }
-    
+
     func isEqualToImage(image: UIImage) -> Bool {
         guard let data1 = UIImagePNGRepresentation(self),
             let data2 = UIImagePNGRepresentation(image) else {return false}
@@ -427,23 +425,23 @@ public extension UIImage {
         let dt2 = data2 as NSData
         return dt1.isEqual(dt2)
     }
-        
+
 }
 
 // MARK: - UICOLOR
 extension UIColor {
-    convenience init(hex: String,_ alpha:CGFloat? = 1) {
+    convenience init(hex: String, _ alpha: CGFloat? = 1) {
         let scanner = Scanner(string: hex)
         scanner.scanLocation = 0
-        
+
         var rgbValue: UInt64 = 0
-        
+
         scanner.scanHexInt64(&rgbValue)
-        
+
         let r = (rgbValue & 0xff0000) >> 16
         let g = (rgbValue & 0xff00) >> 8
         let b = rgbValue & 0xff
-        
+
         self.init(
             red: CGFloat(r) / 0xff,
             green: CGFloat(g) / 0xff,
@@ -457,7 +455,7 @@ extension Date {
     func convertDateFormat(from: String, to: String, dateString: String?) -> String? {
         let fromDateFormatter = DateFormatter()
         fromDateFormatter.dateFormat = from
-        var formattedDateString: String? = nil
+        var formattedDateString: String?
         if dateString != nil {
             let formattedDate = fromDateFormatter.date(from: dateString!)
             if formattedDate != nil {
@@ -468,15 +466,14 @@ extension Date {
         }
         return formattedDateString
     }
-    
-    func toString( dateFormat format  : String ) -> String
-    {
+
+    func toString( dateFormat format: String ) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = format
         return dateFormatter.string(from: self)
     }
-    
-    func addedBy(minutes:Int) -> Date {
+
+    func addedBy(minutes: Int) -> Date {
         return Calendar.current.date(byAdding: .minute, value: minutes, to: self)!
     }
 }
@@ -487,22 +484,22 @@ var ButtonColorObjc = "ButtonColorobjc"
 var ButtonBorderWidthObjc = "ButtonBorderWithobjc"
 var ButtonBackgroundColorObjc = "ButtonBackgroundColorobjc"
 extension UIButton {
-    
-    func startAnimation(activityIndicatorStyle:UIActivityIndicatorViewStyle,_ isHideContent:Bool = false) {
-        
+
+    func startAnimation(activityIndicatorStyle: UIActivityIndicatorViewStyle, _ isHideContent: Bool = false) {
+
         self.setTitleColor(UIColor.clear, for: .disabled)
-        
+
         stopAnimation()
-        
+
         self.isEnabled = false
-        
+
         let indicator = UIActivityIndicatorView(activityIndicatorStyle: activityIndicatorStyle)
         self.addSubview(indicator)
         indicator.translatesAutoresizingMaskIntoConstraints = false
         indicator.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
         indicator.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         indicator.startAnimating()
-        
+
         if isHideContent {
             objc_setAssociatedObject(self, &ButtonColorObjc, self.titleColor(for: self.state), objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             objc_setAssociatedObject(self, &ButtonBorderWidthObjc, self.layer.borderWidth, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -510,10 +507,10 @@ extension UIButton {
             self.setTitleColor(UIColor.clear, for: UIControlState())
         }
     }
-    
+
     func stopAnimation() {
         _ = self.subviews.map({
-            if $0.isKind(of:UIActivityIndicatorView.self) {
+            if $0.isKind(of: UIActivityIndicatorView.self) {
                 $0.removeFromSuperview()
             }
         })
@@ -549,28 +546,28 @@ class UILabelRound: UILabel {
     }
 }
 
-private var RECTLINKS:String = "RECTLINKS"
-private var TAPLINKS:String = "TAPLINKS"
-private var EVENTLINKS:String = "EVENTLINKS"
+private var RECTLINKS: String = "RECTLINKS"
+private var TAPLINKS: String = "TAPLINKS"
+private var EVENTLINKS: String = "EVENTLINKS"
 extension UILabel {
-    
-    var tap:UITapGestureRecognizer {
-        if let  singleTap = objc_getAssociatedObject(self,&TAPLINKS) as? UITapGestureRecognizer  { return singleTap}
+
+    var tap: UITapGestureRecognizer {
+        if let  singleTap = objc_getAssociatedObject(self, &TAPLINKS) as? UITapGestureRecognizer { return singleTap}
         let singleTap = UITapGestureRecognizer(target: self, action: #selector(self.tapLinks(_:)))
 //        singleTap.numberOfTapsRequired = 1 // you can change this value
         return singleTap
     }
-    
-    func handleLinks(_ label:UILabel? = nil,
-                     _ action:((String?)->Void)) {
+
+    func handleLinks(_ label: UILabel? = nil,
+                     _ action: ((String?) -> Void)) {
         guard let attribut = attributedText else {return}
-        var rectlinks:JSON = [:]
+        var rectlinks: JSON = [:]
         attribut.enumerateAttribute(NSLinkAttributeName,
-                                    in: NSMakeRange(0, attribut.length),
-                                    options: .longestEffectiveRangeNotRequired) { (value, range, stop) in
+                                    in: NSRange(location: 0, length: attribut.length),
+                                    options: .longestEffectiveRangeNotRequired) { (value, range, _) in
                                         rectlinks[NSStringFromCGRect(boundingRect(range: range))] = value
         }
-        
+
         if rectlinks.count > 0 {
             objc_setAssociatedObject(self, &RECTLINKS, rectlinks, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             #if DEBUG
@@ -585,11 +582,11 @@ extension UILabel {
             removeHandleLinks()
         }
     }
-    
-    func tapLinks(_ tap:UITapGestureRecognizer) {
-        guard let action = objc_getAssociatedObject(self, &EVENTLINKS) as? (String?)->Void,
+
+    func tapLinks(_ tap: UITapGestureRecognizer) {
+        guard let action = objc_getAssociatedObject(self, &EVENTLINKS) as? (String?) -> Void,
             let tap = objc_getAssociatedObject(self, &TAPLINKS) as? UITapGestureRecognizer,
-            let rectlinks =  objc_getAssociatedObject(self,&RECTLINKS) as? JSON else {return}
+            let rectlinks =  objc_getAssociatedObject(self, &RECTLINKS) as? JSON else {return}
         let touchPoint = tap.location(in: self)
         for key in rectlinks.keys {
             if CGRectFromString(key).contains(touchPoint) {
@@ -602,15 +599,15 @@ extension UILabel {
             }
         }
     }
-    
+
     func removeHandleLinks() {
         removeEvent()
         objc_setAssociatedObject(self, &RECTLINKS, nil, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         objc_setAssociatedObject(self, &TAPLINKS, nil, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         objc_setAssociatedObject(self, &EVENTLINKS, nil, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
-    
-    func boundingRect(range:NSRange)->CGRect {
+
+    func boundingRect(range: NSRange) -> CGRect {
         guard let attribut = attributedText else {return CGRect.zero}
         let textStorage = NSTextStorage(attributedString: attribut)
         let layoutManager = NSLayoutManager()
@@ -618,52 +615,51 @@ extension UILabel {
         let textContainer = NSTextContainer(size: self.bounds.size)
         textContainer.lineFragmentPadding = 0
         layoutManager.addTextContainer(textContainer)
-        
+
         var glyphRange =  NSRange()
         layoutManager.characterRange(forGlyphRange: range, actualGlyphRange: &glyphRange)
         return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
     }
 }
 
-
 // MARK: - UIVIEW
-private var CLOSEBUTTON:String = "CloseBUTTON"
-private var CHECKBAG:String = "CHECKBAG"
+private var CLOSEBUTTON: String = "CloseBUTTON"
+private var CHECKBAG: String = "CHECKBAG"
 extension UIView {
-    
-    var singleTap:UITapGestureRecognizer {
+
+    var singleTap: UITapGestureRecognizer {
         let singleTap = UITapGestureRecognizer(target: self, action: #selector(self.tapDetected(_:)))
 //        singleTap.numberOfTapsRequired = 1 // you can change this value
         return singleTap
     }
-    
-    func addEvent(_ event:(()->Void)) {
+
+    func addEvent(_ event: (() -> Void)) {
         if objc_getAssociatedObject(self, &KeepTap) != nil {return}
-        
+
         self.isUserInteractionEnabled = true
         self.addGestureRecognizer(singleTap)
         objc_setAssociatedObject(self, &KeepTap, singleTap, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         objc_setAssociatedObject(self, &KeepTapEvent, event, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
-    
+
     func removeEvent() {
         if let tap = objc_getAssociatedObject(self, &KeepTap) as? UITapGestureRecognizer {
             self.removeGestureRecognizer(tap)
             objc_setAssociatedObject(self, &KeepTap, nil, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
-        if let _ = objc_getAssociatedObject(self, &KeepTapEvent) as? (()->Void) {
+        if let _ = objc_getAssociatedObject(self, &KeepTapEvent) as? (() -> Void) {
             objc_setAssociatedObject(self, &KeepTapEvent, nil, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
-    
-    //Action
-    func tapDetected(_ sender:UITapGestureRecognizer) {
-        if let event = objc_getAssociatedObject(self, &KeepTapEvent) as? (()->Void) {
+
+    // Action
+    func tapDetected(_ sender: UITapGestureRecognizer) {
+        if let event = objc_getAssociatedObject(self, &KeepTapEvent) as? (() -> Void) {
             event()
         }
     }
-    
-    func startLoading(activityIndicatorStyle:UIActivityIndicatorViewStyle,_ hiddenSubview:Bool = false) {
+
+    func startLoading(activityIndicatorStyle: UIActivityIndicatorViewStyle, _ hiddenSubview: Bool = false) {
         if hiddenSubview {
             _ = self.subviews.map({
                 $0.isHidden = true
@@ -677,16 +673,16 @@ extension UIView {
         indicator.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         indicator.startAnimating()
     }
-    
+
     func stopLoading() {
         _ = self.subviews.map({
-            if $0.isKind(of:UIActivityIndicatorView.self) {
+            if $0.isKind(of: UIActivityIndicatorView.self) {
                 $0.removeFromSuperview()
             }
         })
     }
-    
-    func showNoData(_ message:String = "no_data_stream".localized()) {
+
+    func showNoData(_ message: String = "no_data_stream".localized()) {
         removeNoData()
         let mask = UIView(frame: self.bounds)
         mask.backgroundColor = UIColor.clear
@@ -695,14 +691,14 @@ extension UIView {
         imv.textAlignment = .center
         imv.numberOfLines = 0
         mask.tag = 9989
-        
+
         self.addSubview(mask)
         mask.translatesAutoresizingMaskIntoConstraints = false
         mask.centerXAnchor.constraint(equalTo: mask.superview!.centerXAnchor, constant: 0).isActive = true
         mask.centerYAnchor.constraint(equalTo: mask.superview!.centerYAnchor, constant: 0).isActive = true
         mask.widthAnchor.constraint(equalTo: mask.superview!.widthAnchor, constant: 0).isActive = true
         mask.heightAnchor.constraint(equalTo: mask.superview!.heightAnchor, constant: 0).isActive = true
-        
+
         mask.addSubview(imv)
         imv.translatesAutoresizingMaskIntoConstraints = false
         imv.topAnchor.constraint(equalTo: imv.superview!.topAnchor, constant: 0).isActive = true
@@ -710,18 +706,18 @@ extension UIView {
         imv.bottomAnchor.constraint(equalTo: imv.superview!.bottomAnchor, constant: 0).isActive = true
         imv.leftAnchor.constraint(equalTo: imv.superview!.leftAnchor, constant: 0).isActive = true
     }
-    
+
     func removeNoData() {
-        _ = self.subviews.reversed().map{if $0.tag == 9989 {$0.removeFromSuperview()}}
+        _ = self.subviews.reversed().map {if $0.tag == 9989 {$0.removeFromSuperview()}}
     }
-    
-    func addCloseButton(_ size:CGSize? = nil,_ event:(()->Void)) {
-        
+
+    func addCloseButton(_ size: CGSize? = nil, _ event: (() -> Void)) {
+
         if let image = objc_getAssociatedObject(self, &CLOSEBUTTON) as? UIImageView {
             image.removeEvent()
             image.removeFromSuperview()
         }
-        
+
         let imgClose = UIImageView(frame: self.bounds)
         self.addSubview(imgClose)
         objc_setAssociatedObject(self, &CLOSEBUTTON, imgClose, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -739,19 +735,19 @@ extension UIView {
         imgClose.image = #imageLiteral(resourceName: "ic_close_black_76").tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0))
         imgClose.addEvent(event)
     }
-    
+
     func getWindowTop(to containerView: UIView? = nil) -> CGPoint {
-        let targetRect = self.convert(self.bounds , to: containerView)
+        let targetRect = self.convert(self.bounds, to: containerView)
         return targetRect.origin
     }
-    
+
     /// set Bag for view
     ///
     /// - Parameters:
     ///   - bag: number to display: 0 is hidden bag
     ///   - position: 0 => center | 1 => left | 2 => right
-    func setBag(_ bag:Int,_ position:Int = 0,_ size:CGSize = CGSize(width: 15, height: 15)) {
-        if let label = objc_getAssociatedObject(self, &ButtonBag) as? UILabelRound{
+    func setBag(_ bag: Int, _ position: Int = 0, _ size: CGSize = CGSize(width: 15, height: 15)) {
+        if let label = objc_getAssociatedObject(self, &ButtonBag) as? UILabelRound {
             if bag == 0 {
                 label.removeFromSuperview()
                 objc_setAssociatedObject(self, &ButtonBag, nil, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -769,7 +765,7 @@ extension UIView {
             label.text = "\(bag)"
             self.addSubview(label)
             label.translatesAutoresizingMaskIntoConstraints = false
-            
+
             if position == 0 {
                 label.centerXAnchor.constraint(equalTo: label.superview!.centerXAnchor, constant: (size.width/2)*30/100).isActive = true
                 label.topAnchor.constraint(equalTo: label.superview!.topAnchor, constant: 0).isActive = true
@@ -777,11 +773,10 @@ extension UIView {
                 label.leadingAnchor.constraint(equalTo: label.superview!.leadingAnchor, constant: -(size.width/2)).isActive = true
                 label.topAnchor.constraint(equalTo: label.superview!.topAnchor, constant: 0).isActive = true
             } else if position == 2 {
-                label.trailingAnchor.constraint(equalTo: label.superview!.trailingAnchor, constant:5).isActive = true
+                label.trailingAnchor.constraint(equalTo: label.superview!.trailingAnchor, constant: 5).isActive = true
                 label.topAnchor.constraint(equalTo: label.superview!.topAnchor, constant: 0).isActive = true
             }
-            
-            
+
             let width = label.widthAnchor.constraint(greaterThanOrEqualToConstant: 15)
             width.priority = 751
             label.addConstraint(width)
@@ -791,9 +786,9 @@ extension UIView {
             objc_setAssociatedObject(self, &ButtonBag, label, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
-    
-    func setChecked(_ isCheck:Bool,_ position:Int = 0,_ size:CGSize = CGSize(width: 15, height: 15)) {
-        if let label = objc_getAssociatedObject(self, &CHECKBAG) as? UIImageViewRound{
+
+    func setChecked(_ isCheck: Bool, _ position: Int = 0, _ size: CGSize = CGSize(width: 15, height: 15)) {
+        if let label = objc_getAssociatedObject(self, &CHECKBAG) as? UIImageViewRound {
             if !isCheck {
                 label.removeFromSuperview()
                 objc_setAssociatedObject(self, &CHECKBAG, nil, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -807,7 +802,7 @@ extension UIView {
             label.image = #imageLiteral(resourceName: "ic_check_128")
             self.addSubview(label)
             label.translatesAutoresizingMaskIntoConstraints = false
-            
+
             if position == 0 {
                 label.centerXAnchor.constraint(equalTo: label.superview!.centerXAnchor, constant: (size.width/2)*30/100).isActive = true
                 label.topAnchor.constraint(equalTo: label.superview!.topAnchor, constant: 0).isActive = true
@@ -815,11 +810,10 @@ extension UIView {
                 label.leadingAnchor.constraint(equalTo: label.superview!.leadingAnchor, constant: -(size.width/2)).isActive = true
                 label.topAnchor.constraint(equalTo: label.superview!.topAnchor, constant: 0).isActive = true
             } else if position == 2 {
-                label.trailingAnchor.constraint(equalTo: label.superview!.trailingAnchor, constant:5).isActive = true
+                label.trailingAnchor.constraint(equalTo: label.superview!.trailingAnchor, constant: 5).isActive = true
                 label.topAnchor.constraint(equalTo: label.superview!.topAnchor, constant: 0).isActive = true
             }
-            
-            
+
             let width = label.widthAnchor.constraint(greaterThanOrEqualToConstant: size.width)
             width.priority = 751
             label.addConstraint(width)
@@ -829,7 +823,7 @@ extension UIView {
             objc_setAssociatedObject(self, &CHECKBAG, label, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
-    
+
     func dropShadow(offsetX: CGFloat, offsetY: CGFloat, color: UIColor, opacity: Float, radius: CGFloat, scale: Bool = true) {
         layer.masksToBounds = false
         layer.shadowOffset = CGSize(width: offsetX, height: offsetY)
@@ -843,10 +837,10 @@ extension UIView {
 }
 
 // MARK: - TEXTVIEW
-private var TEXTVIEWPLACEHOLDER:String = "TextViewPlaceholder"
+private var TEXTVIEWPLACEHOLDER: String = "TextViewPlaceholder"
 extension UITextView {
-    func showPlaceHolder(placeholder:String? = nil) {
-        if let label = objc_getAssociatedObject(self, &TEXTVIEWPLACEHOLDER) as? UILabel{
+    func showPlaceHolder(placeholder: String? = nil) {
+        if let label = objc_getAssociatedObject(self, &TEXTVIEWPLACEHOLDER) as? UILabel {
             if placeholder == nil {
                 label.removeFromSuperview()
                 objc_setAssociatedObject(self, &TEXTVIEWPLACEHOLDER, nil, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -863,8 +857,8 @@ extension UITextView {
             label.text = placeholder
             self.addSubview(label)
             label.translatesAutoresizingMaskIntoConstraints = false
-            label.leadingAnchor.constraint(equalTo: label.superview!.leadingAnchor, constant:5).isActive = true
-            label.trailingAnchor.constraint(equalTo: label.superview!.trailingAnchor, constant:10).isActive = true
+            label.leadingAnchor.constraint(equalTo: label.superview!.leadingAnchor, constant: 5).isActive = true
+            label.trailingAnchor.constraint(equalTo: label.superview!.trailingAnchor, constant: 10).isActive = true
             label.topAnchor.constraint(equalTo: label.superview!.topAnchor, constant: 5).isActive = true
             label.heightAnchor.constraint(equalToConstant: 21).isActive = true
             objc_setAssociatedObject(self, &TEXTVIEWPLACEHOLDER, label, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -874,22 +868,22 @@ extension UITextView {
 
 // MARK: - Timer
 final class TimerInvocation: NSObject {
-    
-    var callback: () -> ()
-    
-    init(callback: @escaping () -> ()) {
+
+    var callback: () -> Void
+
+    init(callback: @escaping () -> Void) {
         self.callback = callback
     }
-    
-    func invoke(timer:Timer) {
+
+    func invoke(timer: Timer) {
         callback()
     }
 }
 
 extension Timer {
-    
+
     static func scheduleTimer(timeInterval: TimeInterval, repeats: Bool, invocation: TimerInvocation) {
-        
+
         Timer.scheduledTimer(
             timeInterval: timeInterval,
             target: invocation,
@@ -900,23 +894,23 @@ extension Timer {
 }
 
 // MARK: - TABLEVIEW
-private var PullRefreshEvent:String = "PullRefreshEvent"
-private var RefreshControl:String = "PullRefreshEvent"
+private var PullRefreshEvent: String = "PullRefreshEvent"
+private var RefreshControl: String = "PullRefreshEvent"
 extension UITableView {
-    
-    func pullResfresh(_ event:(()->Void)) {
-        
+
+    func pullResfresh(_ event: (() -> Void)) {
+
         if objc_getAssociatedObject(self, &RefreshControl) == nil {
             let refreshControl = UIRefreshControl()
             objc_setAssociatedObject(self, &RefreshControl, refreshControl, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            refreshControl.attributedTitle = nil//NSAttributedString(string: "pull_to_refresh".localized())
+            refreshControl.attributedTitle = nil// NSAttributedString(string: "pull_to_refresh".localized())
             refreshControl.addTarget(self, action: #selector(self.refresh(sender:)), for: UIControlEvents.valueChanged)
             self.addSubview(refreshControl)
         }
-        
+
         objc_setAssociatedObject(self, &PullRefreshEvent, event, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
-    
+
     func endPullResfresh() {
         if let refreshControl = objc_getAssociatedObject(self, &RefreshControl) as? UIRefreshControl {
             if refreshControl.isRefreshing {
@@ -924,10 +918,10 @@ extension UITableView {
             }
         }
     }
-    
-    func refresh(sender:AnyObject) {
+
+    func refresh(sender: AnyObject) {
         // override it
-        if let event = objc_getAssociatedObject(self, &PullRefreshEvent) as? (()->Void) {
+        if let event = objc_getAssociatedObject(self, &PullRefreshEvent) as? (() -> Void) {
             event()
         }
     }
@@ -935,10 +929,10 @@ extension UITableView {
 
 // MARK: - COLLECTVIEW
 extension UICollectionView {
-    func pullResfresh(_ event:(()->Void)) {
+    func pullResfresh(_ event: (() -> Void)) {
         objc_setAssociatedObject(self, &PullRefreshEvent, event, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
-    
+
     func endPullResfresh() {
         if let refreshControl = objc_getAssociatedObject(self, &RefreshControl) as? UIRefreshControl {
             if refreshControl.isRefreshing {
@@ -946,26 +940,26 @@ extension UICollectionView {
             }
         }
     }
-    
+
     func isUsingPullRefresh() -> Bool {
         if let refreshControl = objc_getAssociatedObject(self, &RefreshControl) as? UIRefreshControl {
             return refreshControl.isRefreshing
         }
         return false
     }
-    
+
     open override func awakeFromNib() {
         super.awakeFromNib()
         let refreshControl = UIRefreshControl()
         objc_setAssociatedObject(self, &RefreshControl, refreshControl, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        refreshControl.attributedTitle = nil//NSAttributedString(string: "pull_to_refresh".localized())
+        refreshControl.attributedTitle = nil// NSAttributedString(string: "pull_to_refresh".localized())
         refreshControl.addTarget(self, action: #selector(self.refresh(sender:)), for: UIControlEvents.valueChanged)
         self.addSubview(refreshControl)
     }
-    
-    func refresh(sender:AnyObject) {
+
+    func refresh(sender: AnyObject) {
         // override it
-        if let event = objc_getAssociatedObject(self, &PullRefreshEvent) as? (()->Void) {
+        if let event = objc_getAssociatedObject(self, &PullRefreshEvent) as? (() -> Void) {
             event()
         }
     }
@@ -990,12 +984,12 @@ extension Array {
     }
     var chooseOne: Element { return self[Int(arc4random_uniform(UInt32(count)))] }
     func choose(_ n: Int) -> Array { return Array(shuffled.prefix(n)) }
-    
-    func reArrange(fromIndex: Int, toIndex: Int) -> Array{
+
+    func reArrange(fromIndex: Int, toIndex: Int) -> Array {
         var arr = self
         let element = arr.remove(at: fromIndex)
         arr.insert(element, at: toIndex)
-        
+
         return arr
     }
 }
@@ -1012,7 +1006,7 @@ extension UINavigationController {
 
 // MARK: - UITABBARCONTROLLER
 extension UITabBar {
-    
+
 //    open override func layoutSubviews() {
 //        super.layoutSubviews()
 //        removeTopLine()
@@ -1048,7 +1042,7 @@ extension AVPlayerViewController {
         if self.isBeingDismissed == false {
             return
         }
-        
+
         // and then , post a simple notification and observe & handle it, where & when you need to.....
         NotificationCenter.default.post(name: .kAVPlayerViewControllerDismissingNotification, object: nil)
     }
@@ -1056,18 +1050,18 @@ extension AVPlayerViewController {
 
 // MARK: - INT
 extension Int64 {
-    func toNumberStringView(_ isSuffix:Bool = true) -> String {
+    func toNumberStringView(_ isSuffix: Bool = true) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        
-        var result1:String?
+
+        var result1: String?
         var suffix = " \("views".localized())"
         if self == 1 {
             suffix = " \("view".localized())"
         }
-        
+
         result1 = formatter.string(from: NSNumber(value: self))
-        
+
         if self > 999 && self < 10000 {
             result1 = formatter.string(from: NSNumber(value: self/1000))
         } else if self > 9999 && self < 1000000 {
@@ -1077,7 +1071,7 @@ extension Int64 {
         } else if self > 999999999 {
             result1 = formatter.string(from: NSNumber(value: self/1000000000000))?.appending("B")
         }
-        
+
         if let result =  result1 {
             if !isSuffix {
                 return result
@@ -1094,17 +1088,17 @@ extension CGFloat {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         return formatter.string(from: NSNumber(value: Int(self)))?.replacingOccurrences(of: ",", with: ".") ?? "\(self)"
-        
+
     }
 }
 
 // MARK: - UIWindow
-private var WindowController:String = "WindowController"
+private var WindowController: String = "WindowController"
 extension UIWindow {
-    func setController(vc:UIViewController? = nil) {
+    func setController(vc: UIViewController? = nil) {
         objc_setAssociatedObject(self, &WindowController, vc, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
-    func quickViewcontroller()->QuickViewController {
+    func quickViewcontroller() -> QuickViewController {
         if let controller = objc_getAssociatedObject(self, &WindowController) as? QuickViewController {
             return controller
         } else {
@@ -1117,35 +1111,35 @@ extension UIWindow {
 
 // MARK: - UIVIEW KEY ANIMATIOn
 extension UIViewKeyframeAnimationOptions {
-    
+
     static var curveEaseIn: UIViewKeyframeAnimationOptions {
         get {
             return UIViewKeyframeAnimationOptions(animationOptions: .curveEaseIn)
         }
     }
-    
+
     static var curveEaseOut: UIViewKeyframeAnimationOptions {
         get {
             return UIViewKeyframeAnimationOptions(animationOptions: .curveEaseOut)
         }
     }
-    
+
     static var curveEaseInOut: UIViewKeyframeAnimationOptions {
         get {
             return UIViewKeyframeAnimationOptions(animationOptions: .curveEaseInOut)
         }
     }
-    
+
     static var curveLinear: UIViewKeyframeAnimationOptions {
         get {
             return UIViewKeyframeAnimationOptions(animationOptions: .curveLinear)
         }
     }
-    
+
     init(animationOptions: UIViewAnimationOptions) {
         rawValue = animationOptions.rawValue
     }
-    
+
 }
 
 // MARK: - AVPlayerLayer
@@ -1154,18 +1148,18 @@ extension CGAffineTransform {
 }
 
 extension AVPlayerLayer {
-    
+
     var fullScreenAnimationDuration: TimeInterval {
         return 0.15
     }
-    
+
     func minimizeToFrame(_ frame: CGRect) {
         UIView.animate(withDuration: fullScreenAnimationDuration) {
             self.setAffineTransform(.identity)
             self.frame = frame
         }
     }
-    
+
     func goFullscreen() {
         UIView.animate(withDuration: fullScreenAnimationDuration) {
             self.setAffineTransform(.ninetyDegreeRotation)
@@ -1173,4 +1167,3 @@ extension AVPlayerLayer {
         }
     }
 }
-

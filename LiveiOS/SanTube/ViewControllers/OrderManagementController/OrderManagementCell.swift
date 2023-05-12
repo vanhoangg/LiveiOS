@@ -14,8 +14,8 @@ enum OrderHistoryType {
 }
 
 protocol OrderManagementCellDelegate {
-    func orderCell(delete order:Order, isForceDelete:Bool)
-    func orderCell(undo order:Order)
+    func orderCell(delete order: Order, isForceDelete: Bool)
+    func orderCell(undo order: Order)
 }
 
 class OrderManagementCell: UITableViewCell {
@@ -24,45 +24,45 @@ class OrderManagementCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        
+
         configView()
     }
 
     // MARK: - api
-    func load(_ data:Order,_ isLoadBuyer:Bool = true) {
+    func load(_ data: Order, _ isLoadBuyer: Bool = true) {
         self.order = data
         var user = data.seller
         if type == .buyer {
             user = data.buyer
         }
-        
+
         lblName.text = user!.name
-        
-        let nameProducts:[String] = data.products.flatMap({ (product) -> String in
+
+        let nameProducts: [String] = data.products.flatMap({ (product) -> String in
             return product.name
         })
-        
+
         // reset
         lblDescription.text = "products".localized().capitalized
-        for (index,item) in nameProducts.enumerated() {
+        for (index, item) in nameProducts.enumerated() {
             if index == 0 {
                 lblDescription.text! += ":\n\(index + 1). " + item
             } else {
                 lblDescription.text! += "\n\(index + 1). " + item
             }
         }
-        
+
         lblStatus.text = data.status.localized().capitalizingFirstLetter()
-        
+
         let stringDate = data.updated_at.UTCToLocal(format: "dd/MM/yyyy")
         if stringDate == Date().toString(dateFormat: "dd/MM/yyyy") {
             lblCreatedDate.text =  data.updated_at.UTCToLocal(format: "HH:mm") + "\n" + "today".localized().capitalized
         } else {
             lblCreatedDate.text =  data.updated_at.UTCToLocal(format: "HH:mm") + "\n" + stringDate
         }
-        
+
         imvAvatar.loadImageUsingCacheWithURLString(user!.avatar)
-        
+
         var color = UIColor.red
         if data.status == AppConfig.status.order.create_new() {
             color = #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1)
@@ -73,9 +73,9 @@ class OrderManagementCell: UITableViewCell {
         } else if data.status == AppConfig.status.order.progress() {
             color = #colorLiteral(red: 1, green: 0.5843137255, blue: 0, alpha: 1)
         }
-        
+
         vwStatus.backgroundColor = color
-        
+
         // set state delete for this order
         if let ord = Support.orderDeleted.getOrderDeleted() {
             if ord.id == data.id {
@@ -87,11 +87,11 @@ class OrderManagementCell: UITableViewCell {
             }
         }
     }
-    
+
     func shouldSelect() -> Bool {
         return !btnDelete.isSelected
     }
-    
+
     // MARK: - event button
     @IBAction func actionDelete(_ sender: UIButton) {
         if sender.isEqual(btnDelete) {
@@ -121,10 +121,10 @@ class OrderManagementCell: UITableViewCell {
     @IBAction func forceDelete(_ sender: UIButton) {
         involkeDeleteOrder(isForce: true)
     }
-    
+
     // MARK: - handle gesture
-    var beginDragXPoint:CGFloat = 0
-    func handleGesture(pan:UIPanGestureRecognizer) {
+    var beginDragXPoint: CGFloat = 0
+    func handleGesture(pan: UIPanGestureRecognizer) {
         if vwCover.isHidden || type == .seller {return}
         let translation = pan.translation(in: self)
         switch pan.state {
@@ -148,9 +148,9 @@ class OrderManagementCell: UITableViewCell {
             } else {
                 widthAnchorVWDelete.constant = 0
             }
-            
+
             btnForceDelete.isHidden = !btnDelete.isSelected
-            
+
             self.setNeedsLayout()
             UIView.animate(withDuration: 0.2, animations: {
                 self.layoutIfNeeded()
@@ -174,56 +174,56 @@ class OrderManagementCell: UITableViewCell {
             print("failed")
         }
     }
-    
+
     // MARK: - private
-    private func involkeDeleteOrder(isForce:Bool) {
+    private func involkeDeleteOrder(isForce: Bool) {
         guard let order = order else { return }
         delegate?.orderCell(delete: order, isForceDelete: isForce)
     }
-    
+
     private func undoDeleteOrder() {
         guard let order = order else { return }
         delegate?.orderCell(undo: order)
     }
-    
+
     private func configView() {
-        
+
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleGesture))
         panGesture.delegate = self
         vwCover.addGestureRecognizer(panGesture)
-        
+
         lblName.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
         lblName.font = UIFont.boldSystemFont(ofSize: fontSize16)
-        
+
         lblDescription.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
         lblDescription.font = UIFont.systemFont(ofSize: fontSize16)
-        
+
         lblStatus.font = UIFont.boldSystemFont(ofSize: fontSize16)
         lblStatus.textAlignment = .center
         lblStatus.textColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-        
+
         lblCreatedDate.textColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         lblCreatedDate.font = UIFont.systemFont(ofSize: fontSize16)
         lblCreatedDate.textAlignment = .center
-        
+
         vwCover.layer.cornerRadius = 5
         vwStatus.layer.cornerRadius = 5
         vwStatus.clipsToBounds = true
         vwDelete.layer.cornerRadius = 5
-        
+
         vwDelete.backgroundColor = UIColor.red
-        
+
         btnDelete.setTitle("delete".localized().capitalized, for: .normal)
         btnDelete.setTitle("undo".localized().capitalized, for: .selected)
         btnDelete.setTitleColor(#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: UIControlState())
-        
+
         btnDelete.setImage(#imageLiteral(resourceName: "ic_undo").tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: .selected)
         btnDelete.setImage(nil, for: .normal)
         btnDelete.imageEdgeInsets = UIEdgeInsets(top: 0, left: -10, bottom: 0, right: 0)
-        
+
         btnForceDelete.isHidden = true
     }
-    
+
     // MARK: - override
     override func prepareForReuse() {
         imvAvatar.image = nil
@@ -234,18 +234,18 @@ class OrderManagementCell: UITableViewCell {
         btnForceDelete.isHidden = true
         vwCover.isHidden = false
     }
-    
+
     // prevent conflict between two pan gesture
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-    
+
     // MARK: - properties
-    var order:Order?
-    var type:OrderHistoryType = .seller
-    var panGesture:UIPanGestureRecognizer!
-    var delegate:OrderManagementCellDelegate?
-    
+    var order: Order?
+    var type: OrderHistoryType = .seller
+    var panGesture: UIPanGestureRecognizer!
+    var delegate: OrderManagementCellDelegate?
+
     // MARK: - outlet
     @IBOutlet weak var vwCover: UIView!
     @IBOutlet weak var imvAvatar: UIImageView!
@@ -258,5 +258,5 @@ class OrderManagementCell: UITableViewCell {
     @IBOutlet weak var btnDelete: UIButton!
     @IBOutlet weak var widthAnchorVWDelete: NSLayoutConstraint!
     @IBOutlet weak var btnForceDelete: UIButton!
-    
+
 }

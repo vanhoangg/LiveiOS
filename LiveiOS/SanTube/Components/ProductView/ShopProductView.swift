@@ -17,7 +17,7 @@ class ShopProductView: UIView {
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var stackContainer: UIStackView!
     @IBOutlet weak var btnPublic: UIButton!
-    var listProducts:[Product] = []
+    var listProducts: [Product] = []
     weak var delegate: ShopProductViewDelegate?
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,35 +27,35 @@ class ShopProductView: UIView {
         super.init(coder: aDecoder)
         commonInit()
     }
-    
-    private func commonInit(){
+
+    private func commonInit() {
         Bundle.main.loadNibNamed("ShopProductView", owner: self, options: nil)
         addSubview(contentView)
         contentView.frame = self.bounds
-        contentView.autoresizingMask = [.flexibleWidth,.flexibleHeight]
-        
+        contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
         btnPublic.layer.cornerRadius = 5.0
         btnPublic.layer.masksToBounds = true
     }
-    func setShopData(_ products:[Product]){
+    func setShopData(_ products: [Product]) {
         if products.count > 0 {
-            for data in listProducts{
+            for data in listProducts {
                 createProductItem(product: data)
             }
         }
     }
-    func reloadShopData(){
+    func reloadShopData() {
         _ = stackContainer.arrangedSubviews.map({ (view) in
             let v = view as! OrderItemView
-            for product in listProducts{
-                if Int(product.id)! == v.tag{
+            for product in listProducts {
+                if Int(product.id)! == v.tag {
                     v.loadProduct(product: product, .shopOwner)
                 }
             }
         })
     }
-    func createProductItem(product:Product!){
-        let v = OrderItemView(frame:CGRect(origin: CGPoint.zero, size: CGSize(width: 100, height: 200)))
+    func createProductItem(product: Product!) {
+        let v = OrderItemView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: 100, height: 200)))
         stackContainer.addArrangedSubview(v)
         v.tag = Int(product.id)!
         v.loadProduct(product: product, .shopOwner)

@@ -737,7 +737,6 @@
 		D7F4131B1FBC57D9001EDF2D /* home@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D7F412E61FBC57D9001EDF2D /* home@3x.png */; };
 		D7F4131C1FBC57D9001EDF2D /* social@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D7F412E71FBC57D9001EDF2D /* social@3x.png */; };
 		D7F4131D1FBC57D9001EDF2D /* ItunesArtwork@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D7F412E81FBC57D9001EDF2D /* ItunesArtwork@2x.png */; };
-		D7F4131E1FBC57D9001EDF2D /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D7F412E91FBC57D9001EDF2D /* Info.plist */; };
 		D7F78D15200C4FB30056043C /* BaseTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F78D14200C4FB30056043C /* BaseTabbarController.swift */; };
 		D7FB44B41FBC5EA2007C366C /* BaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F412AC1FBC57D9001EDF2D /* BaseController.swift */; };
 		D7FB44B51FBC5EA2007C366C /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F412AF1FBC57D9001EDF2D /* Stream.swift */; };
@@ -2627,7 +2626,6 @@
 				6048BE901FA6FDF5005C57C3 /* Frameworks */,
 				6048BE911FA6FDF5005C57C3 /* Resources */,
 				5EC54952FAFD870DA49892CD /* [CP] Embed Pods Frameworks */,
-				66E102C232D90C0893C17715 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -2849,7 +2847,6 @@
 				D72ABC972003173A00F982F9 /* OrderDetailController.xib in Resources */,
 				D7F412F21FBC57D9001EDF2D /* assets.xcassets in Resources */,
 				6054CBCE1FD92CE8003411BA /* lookup_soft_elegance_1.png in Resources */,
-				D7F4131E1FBC57D9001EDF2D /* Info.plist in Resources */,
 				D7C757611FBE819A00B2E31D /* WelcomeController.xib in Resources */,
 				602E06BC1FFE04EF00EA5454 /* ListProductController.xib in Resources */,
 				D74922E22052945D0087D92E /* InputCodeController.xib in Resources */,
@@ -2931,7 +2928,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-SanTube/Pods-SanTube-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-SanTube/Pods-SanTube-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
 				"${BUILT_PRODUCTS_DIR}/Daysquare/Daysquare.framework",
@@ -2960,22 +2957,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SanTube/Pods-SanTube-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		66E102C232D90C0893C17715 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SanTube/Pods-SanTube-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SanTube/Pods-SanTube-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

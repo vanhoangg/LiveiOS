@@ -11,9 +11,9 @@ import UIKit
 class CommentInformationCell: UITableViewCell {
 
     // MARK: - outlet
-    
+
     // MARK: - properties
-    
+
     // MARK: - init
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -21,10 +21,10 @@ class CommentInformationCell: UITableViewCell {
     }
 
     // MARK: - interface
-    func load(_ _comment:JSON) {
-        
+    func load(_ _comment: JSON) {
+
     }
-    
+
     // MARK: - private
-    
+
 }

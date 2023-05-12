@@ -8,14 +8,14 @@
 
 import Foundation
 
-class ConfigStream:NSObject {
+class ConfigStream: NSObject {
     var ip: String = ""
     var port: String = ""
     var username: String = ""
     var password: String = ""
-    
+
     static let current = ConfigStream()
-    
+
     private override init() {
         super.init()
         if let current = ConfigManager.current() {
@@ -25,19 +25,19 @@ class ConfigStream:NSObject {
 }
 
 extension ConfigStream {
-     func parse(_ dictionary:JSON) {
+     func parse(_ dictionary: JSON) {
         if let data = dictionary["ip"] as? String {
             self.ip = data
         }
-        
+
         if let data = dictionary["port"] as? String {
             self.port = data
         }
-        
+
         if let data = dictionary["username"] as? String {
             self.username = data
         }
-        
+
         if let data = dictionary["password"] as? String {
             self.password = data
         }

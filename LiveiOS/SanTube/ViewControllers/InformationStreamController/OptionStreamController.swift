@@ -8,22 +8,22 @@
 
 import UIKit
 
-let OPTION_STREAM_SHARE:Int = 1001
-let OPTION_STREAM_REPORT:Int = 1002
+let OPTION_STREAM_SHARE: Int = 1001
+let OPTION_STREAM_REPORT: Int = 1002
 
 class OptionStreamController: BasePresentController {
 
     // MARK: - api
 
     // MARK: - event
-    func touchButton(_ sender:UIButton) {
+    func touchButton(_ sender: UIButton) {
         self.onSelect?(sender.tag)
         closeView()
         if sender.tag == OPTION_STREAM_SHARE {
             showWarning()
         }
     }
-    
+
     // MARK: - private
     private func closeView() {
         if isShowWarning {
@@ -34,16 +34,15 @@ class OptionStreamController: BasePresentController {
         UIView.animate(withDuration: 0.2, animations: {
             self.containerView.alpha = 0
             self.containerView.transform = CGAffineTransform(translationX: -50, y: 0).concatenating(CGAffineTransform(translationX: self.containerView.frame.size.width, y: 0))
-        }, completion: {isDone in
+        }, completion: {_ in
             self.onDissmiss?()
             if !self.isShowWarning {
                 self.dismiss(animated: false, completion: nil)
             }
         })
     }
-    
-    
-    var isShowWarning:Bool = false
+
+    var isShowWarning: Bool = false
     private func showWarning() {
         isShowWarning = true
         let label = UILabel(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: 10, height: 10)))
@@ -61,19 +60,19 @@ class OptionStreamController: BasePresentController {
         view.bringSubview(toFront: label)
         UIView.animate(withDuration: 3, animations: {
             label.alpha = 0
-        }, completion: {isDone in
+        }, completion: {_ in
             self.dismiss(animated: false, completion: nil)
         })
     }
-    
+
     private func configView() {
-        
+
         containerView = UIView(frame: CGRect(origin: startPoint, size: CGSize(width: 100, height: 100)))
         containerView.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0.6)
         containerView.alpha = 0
         containerView.layer.cornerRadius = 2
         containerView.layer.shadowColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0).cgColor
-        containerView.layer.shadowOffset = CGSize(width:-0.1, height:-0.1)
+        containerView.layer.shadowOffset = CGSize(width: -0.1, height: -0.1)
         containerView.layer.shadowOpacity = 0.5
         containerView.layer.shadowRadius = 5.0
         view.addSubview(containerView)
@@ -85,26 +84,25 @@ class OptionStreamController: BasePresentController {
         containerView.addConstraint(width)
         containerView.addConstraint(height)
         if #available(iOS 11.0, *) {
-            view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: containerView.bottomAnchor,constant:50).isActive = true
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 50).isActive = true
         } else {
-            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor,constant:50).isActive = true
+            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 50).isActive = true
         }
         view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
-        
+
         stackControl = UIStackView(frame: CGRect(origin: startPoint, size: CGSize(width: 100, height: 100)))
         stackControl.distribution = .fill
         stackControl.axis = .vertical
         stackControl.spacing = 1
         containerView.addSubview(stackControl)
         stackControl.translatesAutoresizingMaskIntoConstraints = false
-        containerView.bottomAnchor.constraint(equalTo: stackControl.bottomAnchor,constant:10).isActive = true
+        containerView.bottomAnchor.constraint(equalTo: stackControl.bottomAnchor, constant: 10).isActive = true
         stackControl.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         stackControl.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
         stackControl.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
-        
-        
-        for item in [["title":"share".localized().capitalizingFirstLetter(),"tag":OPTION_STREAM_SHARE],
-                     ["title":"report".localized().capitalizingFirstLetter(),"tag":OPTION_STREAM_REPORT]] {
+
+        for item in [["title": "share".localized().capitalizingFirstLetter(), "tag": OPTION_STREAM_SHARE],
+                     ["title": "report".localized().capitalizingFirstLetter(), "tag": OPTION_STREAM_REPORT]] {
             let btn = UIButton(type: .custom)
             if let title = item["title"] as? String {
                 btn.setTitle(title, for: UIControlState())
@@ -114,7 +112,7 @@ class OptionStreamController: BasePresentController {
             }
             btn.setTitleColor(#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: .normal)
             btn.setTitleColor(#colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1), for: .highlighted)
-            btn.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 10)
+            btn.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
             btn.addTarget(self, action: #selector(touchButton), for: .touchUpInside)
                         btn.titleLabel?.font = UIFont.boldSystemFont(ofSize: fontSize16)
             btn.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
@@ -123,14 +121,14 @@ class OptionStreamController: BasePresentController {
             btn.heightAnchor.constraint(equalToConstant: 50).isActive = true
         }
     }
-    
+
     // MARK: - init
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         configView()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         view.layoutIfNeeded()
@@ -140,29 +138,29 @@ class OptionStreamController: BasePresentController {
             self.containerView.alpha = 1
             self.containerView.transform = .identity
         })
-        
+
         view.addEvent {[weak self] in
             guard let _self = self else {return}
             _self.closeView()
         }
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         view.removeEvent()
     }
-    
+
     deinit {
         print("OptionStreamController delloc")
     }
-    
+
     // MARK: - properties
-    var stackControl:UIStackView!
-    var containerView:UIView!
-    var startPoint:CGPoint = CGPoint.zero
-    
+    var stackControl: UIStackView!
+    var containerView: UIView!
+    var startPoint: CGPoint = CGPoint.zero
+
     // MARK: - closures
-    var onSelect:((Int)->Void)?
-    
+    var onSelect: ((Int) -> Void)?
+
     // MARK: - outlet
 }
