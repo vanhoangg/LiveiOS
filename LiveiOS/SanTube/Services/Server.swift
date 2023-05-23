@@ -153,7 +153,7 @@ final class Server: NSObject {
 
             if error == 0 {
                 if let msg =  jsonArray["email"] as? [String] {
-                    if let msg = msg.first {
+                    if let msg = msg.first() {
                         if msg.contains("email has already been taken") {
                             if let reason = GetDataFailureReason(rawValue: 503) {
                                 completion?(.failure(reason))
@@ -182,7 +182,7 @@ final class Server: NSObject {
         }
     }
 
-    fileprivate func handleListData(response: DataResponse<String>, _ completion: GetListCompletion? = nil) {
+    fileprivate func handleListData(response: DataResponse<String,Error>, _ completion: GetListCompletion? = nil) {
         switch response.result {
         case .success:
 
@@ -228,12 +228,12 @@ final class Server: NSObject {
 
         let alert = UIAlertController(title: "Error!",
                                       message: "api_token_expired".localized(),
-                                      preferredStyle: UIAlertControllerStyle.alert)
+                                      preferredStyle: UIAlertController.Style.alert)
 
         let cancelAction = UIAlertAction(title: "OK",
                                          style: .cancel, handler: { _ in
                                             Server.shared.loginGuest { [weak self] err in
-                                                guard let _self = self else {return}
+                                                guard self != nil else {return}
                                                 if let err = err {
                                                     var msg = ""
                                                     switch err {
@@ -314,10 +314,10 @@ extension Server {
                  _ onComplete: @escaping GetSingleCompletion) {
         let loginManager = LoginManager()
         loginManager.logOut()
-        FBSDKAccessToken.setCurrent(nil)
-        FBSDKProfile.setCurrent(nil)
+//        FBSDKAccessToken.setCurrent(nil)
+//        FBSDKProfile.setCurrent(nil)
         loginManager.defaultAudience = .everyone
-        loginManager.logIn(readPermissions: [.publicProfile, .email, .userBirthday], viewController: vc) { (loginResult) in
+        loginManager.logIn(permissions: [.publicProfile, .email, .userBirthday], viewController: vc) { (loginResult) in
             switch loginResult {
             case .failed(let error):
                 DispatchQueue.main.async {
@@ -370,7 +370,7 @@ extension Server {
                         }
                         return
                     }
-                    if let error = json!["status"] as? Int {
+                    if let error = json["status"] as? Int {
                         if error == 200 {
                             if let objectJson = json {
                                 if let js = objectJson["data"] as? String {

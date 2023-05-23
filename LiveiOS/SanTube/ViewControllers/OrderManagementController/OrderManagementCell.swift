@@ -124,7 +124,7 @@ class OrderManagementCell: UITableViewCell {
 
     // MARK: - handle gesture
     var beginDragXPoint: CGFloat = 0
-    func handleGesture(pan: UIPanGestureRecognizer) {
+    @objc func handleGesture(pan: UIPanGestureRecognizer) {
         if vwCover.isHidden || type == .seller {return}
         let translation = pan.translation(in: self)
         switch pan.state {
@@ -215,7 +215,7 @@ class OrderManagementCell: UITableViewCell {
 
         btnDelete.setTitle("delete".localized().capitalized, for: .normal)
         btnDelete.setTitle("undo".localized().capitalized, for: .selected)
-        btnDelete.setTitleColor(#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: UIControlState())
+        btnDelete.setTitleColor(#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: UIControl.State())
 
         btnDelete.setImage(#imageLiteral(resourceName: "ic_undo").tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: .selected)
         btnDelete.setImage(nil, for: .normal)

@@ -109,7 +109,7 @@ class BubbleGameController: UIViewController {
         let pathAnimation = CAKeyframeAnimation.init(keyPath: "position")
         pathAnimation.duration = TIME_LIFE_BUBBLE
         pathAnimation.path = zigzagPath.cgPath
-        pathAnimation.fillMode = kCAFillModeForwards
+        pathAnimation.fillMode = CAMediaTimingFillMode.forwards
         pathAnimation.isRemovedOnCompletion = false
 
         bubble.layer.add(pathAnimation, forKey: "movingAnimation")

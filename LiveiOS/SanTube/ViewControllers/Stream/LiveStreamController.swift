@@ -712,31 +712,31 @@ class LiveStreamController: BaseController, LFLiveSessionDelegate, CreateStreamV
     // close button
     var closeButton: UIButton = {
         let closeButton = UIButton(frame: CGRect(x: 10, y: 20, width: 44, height: 44))
-        closeButton.setImage(UIImage(named: "icon_back_stream"), for: UIControlState())
+        closeButton.setImage(UIImage(named: "icon_back_stream"), for: UIControl.State())
         return closeButton
     }()
 
     // switch camera button
     var cameraButton: UIButton = {
         let cameraButton = UIButton(frame: CGRect(x: UIScreen.main.bounds.width - 54, y: 20, width: 44, height: 44))
-        cameraButton.setImage(UIImage(named: "camra_preview"), for: UIControlState())
-        cameraButton.setImage(UIImage(named: "camra_preview"), for: UIControlState())
+        cameraButton.setImage(UIImage(named: "camra_preview"), for: UIControl.State())
+        cameraButton.setImage(UIImage(named: "camra_preview"), for: UIControl.State())
         return cameraButton
     }()
 
     // filter buttion
     var beautyButton: UIButton = {
         let beautyButton = UIButton(frame: CGRect(x: 20, y: UIScreen.main.bounds.height - 50, width: 44, height: 44))
-        beautyButton.setImage(UIImage(named: "camra_beauty"), for: UIControlState.selected)
-        beautyButton.setImage(UIImage(named: "camra_beauty_close"), for: UIControlState())
+        beautyButton.setImage(UIImage(named: "camra_beauty"), for: UIControl.State.selected)
+        beautyButton.setImage(UIImage(named: "camra_beauty_close"), for: UIControl.State())
         return beautyButton
     }()
 
     // filter buttion
     var shareButton: UIButton = {
         let shareButton = UIButton(frame: CGRect(x: UIScreen.main.bounds.width - 54, y: UIScreen.main.bounds.height - 50, width: 44, height: 44))
-        shareButton.setImage(UIImage(named: "icon_share_fb"), for: UIControlState.selected)
-        shareButton.setImage(UIImage(named: "icon_share_fb"), for: UIControlState())
+        shareButton.setImage(UIImage(named: "icon_share_fb"), for: UIControl.State.selected)
+        shareButton.setImage(UIImage(named: "icon_share_fb"), for: UIControl.State())
         return shareButton
     }()
 

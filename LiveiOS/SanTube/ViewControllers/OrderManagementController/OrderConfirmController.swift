@@ -22,7 +22,7 @@ enum OrderType {
 class OrderConfirmController: BaseController {
 
     // MARK: - event
-    func actionButton(_ sender: UIButton) {
+    @objc func actionButton(_ sender: UIButton) {
 
         sender.startAnimation(activityIndicatorStyle: .white)
 
@@ -135,9 +135,9 @@ class OrderConfirmController: BaseController {
     // MARK: - private
     fileprivate func validate() -> Bool {
 
-        textViewName.showPlaceHolder(placeholder: textViewName.text.characters.count != 0 ? nil : "enter_your_name".localized().capitalizingFirstLetter())
-        textViewAddress.showPlaceHolder(placeholder: textViewAddress.text.characters.count != 0 ? nil : "enter_your_address".localized().capitalizingFirstLetter())
-        textViewPhone.showPlaceHolder(placeholder: textViewPhone.text.characters.count != 0 ? nil : "enter_your_phone".localized().capitalizingFirstLetter())
+        textViewName.showPlaceHolder(placeholder: textViewName.text.count != 0 ? nil : "enter_your_name".localized().capitalizingFirstLetter())
+        textViewAddress.showPlaceHolder(placeholder: textViewAddress.text.count != 0 ? nil : "enter_your_address".localized().capitalizingFirstLetter())
+        textViewPhone.showPlaceHolder(placeholder: textViewPhone.text.count != 0 ? nil : "enter_your_phone".localized().capitalizingFirstLetter())
 
         if let userS = userShipping {
             _ = stackControl.arrangedSubviews.map {if let btn = $0 as? UIButton {if btn.tag == TAG_BUTTON_CONFIRM {btn.isEnabled = userS.isValid()}}}
@@ -264,7 +264,7 @@ class OrderConfirmController: BaseController {
 
     private func loadUserShipping(shipping: UserShipping) {
         guard let userS = userShipping else {userShipping = shipping; reloadTextView(); return}
-        if userS.id.characters.count > 0 {
+        if userS.id.count > 0 {
             return
         }
         userShipping = shipping
@@ -324,7 +324,7 @@ class OrderConfirmController: BaseController {
             stackControl.addArrangedSubview(button)
             button.translatesAutoresizingMaskIntoConstraints = false
             let height = button.heightAnchor.constraint(equalToConstant: 40)
-            height.priority = 750
+            height.priority = UILayoutPriority(750)
             button.addConstraint(height)
         }
 
@@ -360,14 +360,14 @@ class OrderConfirmController: BaseController {
             button.setBackgroundImage(#imageLiteral(resourceName: "Pixel").tint(with: #colorLiteral(red: 0.9019607843, green: 0.768627451, blue: 0, alpha: 1)), for: .highlighted)
             button.setTitle("user_shipping_invalid".localized(), for: .disabled)
         } else if button.tag == TAG_BUTTON_REJECT {
-            button.setTitleColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), for: UIControlState())
-            button.setBackgroundImage(#imageLiteral(resourceName: "Pixel").tint(with: #colorLiteral(red: 1, green: 0.231372549, blue: 0.1882352941, alpha: 1)), for: UIControlState())
+            button.setTitleColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), for: UIControl.State())
+            button.setBackgroundImage(#imageLiteral(resourceName: "Pixel").tint(with: #colorLiteral(red: 1, green: 0.231372549, blue: 0.1882352941, alpha: 1)), for: UIControl.State())
         } else if button.tag == TAG_BUTTON_PROCESS {
-            button.setTitleColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), for: UIControlState())
-            button.setBackgroundImage(#imageLiteral(resourceName: "Pixel").tint(with: #colorLiteral(red: 1, green: 0.5843137255, blue: 0, alpha: 1)), for: UIControlState())
+            button.setTitleColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), for: UIControl.State())
+            button.setBackgroundImage(#imageLiteral(resourceName: "Pixel").tint(with: #colorLiteral(red: 1, green: 0.5843137255, blue: 0, alpha: 1)), for: UIControl.State())
         } else if button.tag == TAG_BUTTON_FINISH {
-            button.setTitleColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), for: UIControlState())
-            button.setBackgroundImage(#imageLiteral(resourceName: "Pixel").tint(with: #colorLiteral(red: 0.05098039216, green: 0.6039215686, blue: 0.007843137255, alpha: 1)), for: UIControlState())
+            button.setTitleColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), for: UIControl.State())
+            button.setBackgroundImage(#imageLiteral(resourceName: "Pixel").tint(with: #colorLiteral(red: 0.05098039216, green: 0.6039215686, blue: 0.007843137255, alpha: 1)), for: UIControl.State())
         }
     }
 
@@ -393,8 +393,8 @@ class OrderConfirmController: BaseController {
         super.viewWillAppear(animated)
 
         // listern behavious keyboard
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 
         // check if this view is root, set background color and button back
         guard let nv = navigationController else { return }
@@ -410,7 +410,7 @@ class OrderConfirmController: BaseController {
         btnBack.clipsToBounds = true
         btnBack.semanticContentAttribute = .forceLeftToRight
         btnBack.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        btnBack.setImage(UIImage(named: "arrow_left_white_48")?.tint(with: #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)), for: UIControlState())
+        btnBack.setImage(UIImage(named: "arrow_left_white_48")?.tint(with: #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)), for: UIControl.State())
         btnBack.addTarget(self, action: #selector(self.menuPress(sender:)), for: .touchUpInside)
         let itemBack = UIBarButtonItem(customView: btnBack)
         self.navigationItem.leftBarButtonItems = [itemBack]
@@ -419,8 +419,8 @@ class OrderConfirmController: BaseController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         switchToEditInformation(false)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
     deinit {
@@ -430,7 +430,7 @@ class OrderConfirmController: BaseController {
     }
 
     // MARK: - support
-    func hideKeyboard(_ sender: UITapGestureRecognizer) {
+    @objc func hideKeyboard(_ sender: UITapGestureRecognizer) {
         self.hideKeyboard()
     }
 
@@ -438,11 +438,11 @@ class OrderConfirmController: BaseController {
         self.view.endEditing(true)
     }
 
-    func keyboardWillShow(notification: NSNotification) {
+    @objc func keyboardWillShow(notification: NSNotification) {
         // Need to calculate keyboard exact size due to Apple suggestions
         //        self.scrollVIew.isScrollEnabled = true
         var info = notification.userInfo!
-        let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size
+        let keyboardSize = (info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size
         let contentInsets: UIEdgeInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardSize!.height, right: 0.0)
 
         self.scrollView.contentInset = contentInsets
@@ -452,7 +452,7 @@ class OrderConfirmController: BaseController {
         aRect.size.height -= keyboardSize!.height
     }
 
-    func keyboardWillHide(notification: NSNotification) {
+    @objc func keyboardWillHide(notification: NSNotification) {
 
         let contentInsets: UIEdgeInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
         self.scrollView.contentInset = contentInsets

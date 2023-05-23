@@ -17,8 +17,13 @@ PODS:
     - FBSDKLoginKit/Login (= 5.15.1)
   - FBSDKLoginKit/Login (5.15.1):
     - FBSDKCoreKit (~> 5.0)
-  - ijkplayer (1.1.2)
-  - Localize-Swift (2.0.0)
+  - ijkplayer (1.1.3)
+  - Localize-Swift (3.2.0):
+    - Localize-Swift/LocalizeSwiftCore (= 3.2.0)
+    - Localize-Swift/UIKit (= 3.2.0)
+  - Localize-Swift/LocalizeSwiftCore (3.2.0)
+  - Localize-Swift/UIKit (3.2.0):
+    - Localize-Swift/LocalizeSwiftCore
   - Socket.IO-Client-Swift (12.0.0):
     - StarscreamSocketIO (~> 8.0.7)
   - StarscreamSocketIO (8.0.7)
@@ -53,7 +58,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   Daysquare:
-    :commit: 9ab2710b56bccf0c843e2c8cc585ee76255592a5
+    :commit: 641a9b91dd2380c9a302dfeeb3876afe9bacd416
     :git: https://github.com/unixzii/Daysquare.git
 
 SPEC CHECKSUMS:
@@ -63,8 +68,8 @@ SPEC CHECKSUMS:
   FacebookLogin: 6cee9fd6e1fe976fe8f7eec199e27b28b14f5d63
   FBSDKCoreKit: 1d5acf7c9d7a2f92bb1a242dc60cae5b7adb91df
   FBSDKLoginKit: f1ea8026a58b52d30c9f2e6a58ca7d813619fb83
-  ijkplayer: da342ca5262c25ed7166c5b73a94c1548496000e
-  Localize-Swift: c798ec9286494866f7068f85f7c71283ac5bdab4
+  ijkplayer: 1a1a33f5b0387bd7ea297337853130b9ddb20093
+  Localize-Swift: 6f4475136bdb0d7b2882ea3d4ea919d70142b232
   Socket.IO-Client-Swift: 5b0154b42b3892bfb4c44fa138cbeb8afec4f6ef
   StarscreamSocketIO: 00b54e4208481ca5cef089545353aaf126bae16d
   TLPhotoPicker: 939c40eaad130b69f9571e61e021e8120fa76329

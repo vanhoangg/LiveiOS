@@ -65,7 +65,7 @@ class SelectCategoryController: BasePresentController {
 
     func setTitleButton(_ title: String? = nil) {
         if let text = title {
-            btnDone.setTitle(text, for: UIControlState())
+            btnDone.setTitle(text, for: UIControl.State())
         }
     }
 
@@ -73,7 +73,7 @@ class SelectCategoryController: BasePresentController {
     func configView() {
         collectView.register(UINib(nibName: "CategoriesCollectionViewCell", bundle: Bundle.main), forCellWithReuseIdentifier: "cell")
 
-        btnDone.setTitleColor(UIColor.gray, for: UIControlState())
+        btnDone.setTitleColor(UIColor.gray, for: UIControl.State())
         btnDone.titleLabel?.font = UIFont.boldSystemFont(ofSize: fontSize17)
 
         if !isShowConfirmedButton {
@@ -82,7 +82,7 @@ class SelectCategoryController: BasePresentController {
     }
 
     func configText() {
-        btnDone.setTitle("confirm".localized().uppercased(), for: UIControlState())
+        btnDone.setTitle("confirm".localized().uppercased(), for: UIControl.State())
     }
 
     func validate() {

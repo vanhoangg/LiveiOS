@@ -29,7 +29,7 @@ class CustomControlMedia: UIView {
     fileprivate var isFullScreenState: Bool = false {
         didSet {
             for constraint in iconFullScreen.superview!.constraints {
-                if constraint.firstItem.isEqual(iconFullScreen) && constraint.firstAttribute == .top {
+                if ((constraint.firstItem!.isEqual(iconFullScreen) ) && constraint.firstAttribute == .top ){
                     constraint.constant = isFullScreenState ? 25 : 5
                 }
             }
@@ -108,7 +108,7 @@ class CustomControlMedia: UIView {
 
     }
 
-    func playerDidFinishPlaying(note: NSNotification) {
+  @objc func playerDidFinishPlaying(note: NSNotification) {
         print("Video Finished")
         currentTimeVideo = 0
         displayLinkUpdateSliderValue?.invalidate()

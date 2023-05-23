@@ -20,7 +20,7 @@ class TabBarController: UITabBarController {
         // set image for button
        // button.setImage(UIImage(named: "fb.png"), for: UIControlState.normal)
         // add function for button
-        button.addTarget(self, action: #selector(TabBarController.fbButtonPressed), for: UIControlEvents.touchUpInside)
+        button.addTarget(self, action: #selector(TabBarController.fbButtonPressed), for: UIControl.Event.touchUpInside)
         // set frame
         button.frame = CGRect(x: 0, y: 0, width: 46, height: 46)
         button.layer.cornerRadius = 23
@@ -33,7 +33,7 @@ class TabBarController: UITabBarController {
                 guard let data = data, error == nil else { return }
                 print(response?.suggestedFilename ?? url.lastPathComponent)
                 DispatchQueue.main.async {
-                     button.setImage(UIImage(data: data), for: UIControlState.normal)
+                    button.setImage(UIImage(data: data), for: UIControl.State.normal)
                 }
             }
         }
@@ -49,7 +49,7 @@ class TabBarController: UITabBarController {
             }.resume()
     }
 
-    func fbButtonPressed() {
+    @objc func fbButtonPressed() {
         if let viewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ProfileController") as? ProfileController {
             if let navigator = navigationController {
                 navigator.pushViewController(viewController, animated: true)

@@ -43,13 +43,13 @@ class ChooseCategoryStreamView: UIView {
         stackCategories.topAnchor.constraint(equalTo: stackCategories.superview!.topAnchor, constant: 0).isActive = true
         stackCategories.leadingAnchor.constraint(equalTo: stackCategories.superview!.leadingAnchor, constant: 0).isActive = true
         let trailStack = stackCategories.superview?.trailingAnchor.constraint(equalTo: stackCategories.trailingAnchor, constant: 0)
-        trailStack!.priority = 1
+        trailStack!.priority = UILayoutPriority(1)
         stackCategories.superview?.addConstraint(trailStack!)
         stackCategories.superview?.bottomAnchor.constraint(equalTo: stackCategories.bottomAnchor, constant: 0).isActive = true
 
         scrollView.heightAnchor.constraint(equalTo: stackCategories.heightAnchor, multiplier: 1).isActive = true
         let width = stackCategories.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1)
-        width.priority = 250
+        width.priority = UILayoutPriority(250)
         self.addConstraint(width)
 
         reload()

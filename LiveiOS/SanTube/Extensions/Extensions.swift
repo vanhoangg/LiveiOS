@@ -18,7 +18,7 @@ extension String {
         var matchResults: [String] = []
         for pattern in patterns {
             if let regex = try? NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options.caseInsensitive) {
-                let uls = regex.matches(in: self, options: NSRegularExpression.MatchingOptions.init(rawValue: 0), range: NSRange(location: 0, length: self.characters.count))
+                let uls = regex.matches(in: self, options: NSRegularExpression.MatchingOptions.init(rawValue: 0), range: NSRange(location: 0, length: self.count))
 
                 for match in uls {
                     matchResults.append((self as NSString).substring(with: match.range))
@@ -69,7 +69,7 @@ extension String {
 
     func isValidPassword() -> Bool {
         var returnValue = true
-        if self.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines).characters.count < 6 || self.getListSub(patterns: ["</(.*)>", "<(.*)/>"]).count > 0 {
+        if self.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines).count < 6 || self.getListSub(patterns: ["</(.*)>", "<(.*)/>"]).count > 0 {
             returnValue = false
         }
         if (self as NSString).substring(to: 0) == " " {
@@ -79,8 +79,8 @@ extension String {
     }
 
     func capitalizingFirstLetter() -> String {
-        let first = String(characters.prefix(1)).capitalized
-        let other = String(characters.dropFirst())
+        let first = String(self.prefix(1)).capitalized
+        let other = String(self.dropFirst())
         return first + other
     }
 
@@ -150,7 +150,7 @@ extension String {
     /// - Returns: optional image
     func createQRCodeImage(_ size: CGSize = CGSize(width: 115, height: 115)) -> UIImage? {
 
-        if self.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines).characters.count == 0 {
+        if self.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines).count == 0 {
             return nil
         }
 
@@ -172,7 +172,7 @@ extension String {
 
         let transform = CGAffineTransform(scaleX: sz.width/defaultSize, y: sz.width/defaultSize)
 
-        if let output = filter!.outputImage?.applying(transform) {
+        if let output = filter!.outputImage?.transformed(by: transform) {
             return UIImage(ciImage: output)
         }
         return UIImage(ciImage: filter!.outputImage!)
@@ -243,7 +243,7 @@ extension UIImageView {
 
                             if let s = size {
                                 let imgScale = downloadedImage.resizeImageWith(newSize: s)
-                                if let imageData = UIImageJPEGRepresentation(imgScale, 0.7) {
+                                if let imageData = imgScale.jpegData(compressionQuality: 0.7) {
                                     if let img = UIImage(data: imageData) {
                                         imageCache.setObject(img, forKey: NSString(string: URLString))
                                         DispatchQueue.main.async {
@@ -419,8 +419,8 @@ public extension UIImage {
     }
 
     func isEqualToImage(image: UIImage) -> Bool {
-        guard let data1 = UIImagePNGRepresentation(self),
-            let data2 = UIImagePNGRepresentation(image) else {return false}
+        guard let data1 = self.pngData(),
+              let data2 = image.pngData() else {return false}
         let dt1 = data1 as NSData
         let dt2 = data2 as NSData
         return dt1.isEqual(dt2)
@@ -485,7 +485,7 @@ var ButtonBorderWidthObjc = "ButtonBorderWithobjc"
 var ButtonBackgroundColorObjc = "ButtonBackgroundColorobjc"
 extension UIButton {
 
-    func startAnimation(activityIndicatorStyle: UIActivityIndicatorViewStyle, _ isHideContent: Bool = false) {
+    func startAnimation(activityIndicatorStyle: UIActivityIndicatorView.Style, _ isHideContent: Bool = false) {
 
         self.setTitleColor(UIColor.clear, for: .disabled)
 
@@ -493,7 +493,7 @@ extension UIButton {
 
         self.isEnabled = false
 
-        let indicator = UIActivityIndicatorView(activityIndicatorStyle: activityIndicatorStyle)
+        let indicator = UIActivityIndicatorView(style: activityIndicatorStyle)
         self.addSubview(indicator)
         indicator.translatesAutoresizingMaskIntoConstraints = false
         indicator.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
@@ -504,7 +504,7 @@ extension UIButton {
             objc_setAssociatedObject(self, &ButtonColorObjc, self.titleColor(for: self.state), objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             objc_setAssociatedObject(self, &ButtonBorderWidthObjc, self.layer.borderWidth, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             objc_setAssociatedObject(self, &ButtonBackgroundColorObjc, self.backgroundColor, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            self.setTitleColor(UIColor.clear, for: UIControlState())
+            self.setTitleColor(UIColor.clear, for: UIControl.State())
         }
     }
 
@@ -562,10 +562,10 @@ extension UILabel {
                      _ action: ((String?) -> Void)) {
         guard let attribut = attributedText else {return}
         var rectlinks: JSON = [:]
-        attribut.enumerateAttribute(NSLinkAttributeName,
+        attribut.enumerateAttribute(NSAttributedString.Key.link,
                                     in: NSRange(location: 0, length: attribut.length),
                                     options: .longestEffectiveRangeNotRequired) { (value, range, _) in
-                                        rectlinks[NSStringFromCGRect(boundingRect(range: range))] = value
+            rectlinks[NSCoder.string(for: boundingRect(range: range))] = value
         }
 
         if rectlinks.count > 0 {
@@ -583,13 +583,13 @@ extension UILabel {
         }
     }
 
-    func tapLinks(_ tap: UITapGestureRecognizer) {
+    @objc func tapLinks(_ tap: UITapGestureRecognizer) {
         guard let action = objc_getAssociatedObject(self, &EVENTLINKS) as? (String?) -> Void,
             let tap = objc_getAssociatedObject(self, &TAPLINKS) as? UITapGestureRecognizer,
             let rectlinks =  objc_getAssociatedObject(self, &RECTLINKS) as? JSON else {return}
         let touchPoint = tap.location(in: self)
         for key in rectlinks.keys {
-            if CGRectFromString(key).contains(touchPoint) {
+            if NSCoder.cgRect(for: key).contains(touchPoint) {
                 if let url = rectlinks[key] as? URL {
                     action(url.absoluteString)
                 } else if let str = rectlinks[key] as? NSString {
@@ -653,20 +653,20 @@ extension UIView {
     }
 
     // Action
-    func tapDetected(_ sender: UITapGestureRecognizer) {
+    @objc func tapDetected(_ sender: UITapGestureRecognizer) {
         if let event = objc_getAssociatedObject(self, &KeepTapEvent) as? (() -> Void) {
             event()
         }
     }
 
-    func startLoading(activityIndicatorStyle: UIActivityIndicatorViewStyle, _ hiddenSubview: Bool = false) {
+    func startLoading(activityIndicatorStyle: UIActivityIndicatorView.Style, _ hiddenSubview: Bool = false) {
         if hiddenSubview {
             _ = self.subviews.map({
                 $0.isHidden = true
             })
         }
         stopLoading()
-        let indicator = UIActivityIndicatorView(activityIndicatorStyle: activityIndicatorStyle)
+        let indicator = UIActivityIndicatorView(style: activityIndicatorStyle)
         self.addSubview(indicator)
         indicator.translatesAutoresizingMaskIntoConstraints = false
         indicator.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
@@ -778,7 +778,7 @@ extension UIView {
             }
 
             let width = label.widthAnchor.constraint(greaterThanOrEqualToConstant: 15)
-            width.priority = 751
+            width.priority = UILayoutPriority(751)
             label.addConstraint(width)
             label.heightAnchor.constraint(equalToConstant: 15).isActive = true
             label.layoutIfNeeded()
@@ -815,7 +815,7 @@ extension UIView {
             }
 
             let width = label.widthAnchor.constraint(greaterThanOrEqualToConstant: size.width)
-            width.priority = 751
+            width.priority = UILayoutPriority(751)
             label.addConstraint(width)
             label.heightAnchor.constraint(equalToConstant: size.height).isActive = true
             label.layoutIfNeeded()
@@ -875,7 +875,7 @@ final class TimerInvocation: NSObject {
         self.callback = callback
     }
 
-    func invoke(timer: Timer) {
+    @objc func invoke(timer: Timer) {
         callback()
     }
 }
@@ -904,7 +904,7 @@ extension UITableView {
             let refreshControl = UIRefreshControl()
             objc_setAssociatedObject(self, &RefreshControl, refreshControl, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             refreshControl.attributedTitle = nil// NSAttributedString(string: "pull_to_refresh".localized())
-            refreshControl.addTarget(self, action: #selector(self.refresh(sender:)), for: UIControlEvents.valueChanged)
+            refreshControl.addTarget(self, action: #selector(self.refresh(sender:)), for: UIControl.Event.valueChanged)
             self.addSubview(refreshControl)
         }
 
@@ -919,7 +919,7 @@ extension UITableView {
         }
     }
 
-    func refresh(sender: AnyObject) {
+    @objc func refresh(sender: AnyObject) {
         // override it
         if let event = objc_getAssociatedObject(self, &PullRefreshEvent) as? (() -> Void) {
             event()
@@ -953,11 +953,11 @@ extension UICollectionView {
         let refreshControl = UIRefreshControl()
         objc_setAssociatedObject(self, &RefreshControl, refreshControl, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         refreshControl.attributedTitle = nil// NSAttributedString(string: "pull_to_refresh".localized())
-        refreshControl.addTarget(self, action: #selector(self.refresh(sender:)), for: UIControlEvents.valueChanged)
+        refreshControl.addTarget(self, action: #selector(self.refresh(sender:)), for: UIControl.Event.valueChanged)
         self.addSubview(refreshControl)
     }
 
-    func refresh(sender: AnyObject) {
+    @objc func refresh(sender: AnyObject) {
         // override it
         if let event = objc_getAssociatedObject(self, &PullRefreshEvent) as? (() -> Void) {
             event()
@@ -1110,34 +1110,34 @@ extension UIWindow {
 }
 
 // MARK: - UIVIEW KEY ANIMATIOn
-extension UIViewKeyframeAnimationOptions {
+extension UIView.KeyframeAnimationOptions {
 
-    static var curveEaseIn: UIViewKeyframeAnimationOptions {
+    static var curveEaseIn: UIView.KeyframeAnimationOptions {
         get {
-            return UIViewKeyframeAnimationOptions(animationOptions: .curveEaseIn)
+            return UIView.KeyframeAnimationOptions(animationOptions: .curveEaseIn)
         }
     }
 
-    static var curveEaseOut: UIViewKeyframeAnimationOptions {
+    static var curveEaseOut: UIView.KeyframeAnimationOptions {
         get {
-            return UIViewKeyframeAnimationOptions(animationOptions: .curveEaseOut)
+            return UIView.KeyframeAnimationOptions(animationOptions: .curveEaseOut)
         }
     }
 
-    static var curveEaseInOut: UIViewKeyframeAnimationOptions {
+    static var curveEaseInOut: UIView.KeyframeAnimationOptions {
         get {
-            return UIViewKeyframeAnimationOptions(animationOptions: .curveEaseInOut)
+            return UIView.KeyframeAnimationOptions(animationOptions: .curveEaseInOut)
         }
     }
 
-    static var curveLinear: UIViewKeyframeAnimationOptions {
+    static var curveLinear: UIView.KeyframeAnimationOptions {
         get {
-            return UIViewKeyframeAnimationOptions(animationOptions: .curveLinear)
+            return UIView.KeyframeAnimationOptions(animationOptions: .curveLinear)
         }
     }
 
-    init(animationOptions: UIViewAnimationOptions) {
-        rawValue = animationOptions.rawValue
+    init(animationOptions: UIView.AnimationOptions) {
+        self.rawValue = animationOptions.rawValue
     }
 
 }

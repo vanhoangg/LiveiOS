@@ -77,7 +77,7 @@ extension OrderItem {
 //                mix = String(data: mix.data(using: String.Encoding.utf8)!, encoding: String.Encoding.utf8)!
 //            }
 
-            if mix.characters.count == 0 {
+            if mix.count == 0 {
                 mix = data
             }
             self.name = mix

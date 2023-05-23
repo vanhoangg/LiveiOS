@@ -16,7 +16,7 @@ class OptionStreamController: BasePresentController {
     // MARK: - api
 
     // MARK: - event
-    func touchButton(_ sender: UIButton) {
+    @objc func touchButton(_ sender: UIButton) {
         self.onSelect?(sender.tag)
         closeView()
         if sender.tag == OPTION_STREAM_SHARE {
@@ -57,7 +57,7 @@ class OptionStreamController: BasePresentController {
         label.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         label.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         label.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        view.bringSubview(toFront: label)
+        view.bringSubviewToFront(label)
         UIView.animate(withDuration: 3, animations: {
             label.alpha = 0
         }, completion: {_ in
@@ -79,8 +79,8 @@ class OptionStreamController: BasePresentController {
         containerView.translatesAutoresizingMaskIntoConstraints = false
         let width = containerView.widthAnchor.constraint(equalToConstant: 200)
         let height = containerView.heightAnchor.constraint(equalToConstant: 100)
-        width.priority = 10
-        height.priority = 10
+        width.priority = UILayoutPriority(10)
+        height.priority = UILayoutPriority(10)
         containerView.addConstraint(width)
         containerView.addConstraint(height)
         if #available(iOS 11.0, *) {
@@ -105,7 +105,7 @@ class OptionStreamController: BasePresentController {
                      ["title": "report".localized().capitalizingFirstLetter(), "tag": OPTION_STREAM_REPORT]] {
             let btn = UIButton(type: .custom)
             if let title = item["title"] as? String {
-                btn.setTitle(title, for: UIControlState())
+                btn.setTitle(title, for: UIControl.State())
             }
             if let tag = item["tag"] as? Int {
                 btn.tag = tag

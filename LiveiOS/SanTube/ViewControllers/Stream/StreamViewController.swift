@@ -38,11 +38,11 @@ class StreamViewController: BaseController {
         if vc.parent != nil {
             isGoDirect = false
             vc.view.removeFromSuperview()
-            vc.removeFromParentViewController()
+            vc.removeFromParent()
         }
-        self.addChildViewController(vc)
+        self.addChild(vc)
         view.addSubview(vc.view)
-        vc.didMove(toParentViewController: self)
+        vc.didMove(toParent: self)
         vc.view.translatesAutoresizingMaskIntoConstraints = false
         vc.view.topAnchor.constraint(equalTo: vc.view.superview!.topAnchor, constant: 0).isActive = true
         vc.view.trailingAnchor.constraint(equalTo: vc.view.superview!.trailingAnchor, constant: 0).isActive = true
@@ -60,7 +60,7 @@ class StreamViewController: BaseController {
         // add information controller to view stream
         let vc1 = InformationStreamController(nibName: "InformationStreamController", bundle: Bundle.main)
         vc1.stream = self.stream
-        self.addChildViewController(vc1)
+        self.addChild(vc1)
         self.view.addSubview(vc1.view)
         vc1.view.translatesAutoresizingMaskIntoConstraints = false
         vc1.view.topAnchor.constraint(equalTo: vc1.view.superview!.topAnchor).isActive = true

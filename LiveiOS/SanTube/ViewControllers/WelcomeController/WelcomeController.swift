@@ -106,7 +106,7 @@ class WelcomeController: BasePresentController {
         categoryController = SelectCategoryController(nibName: "SelectCategoryController", bundle: Bundle.main)
         categoryController.isMutilSelect = true
         categoryController.requiredMinSelected = 3
-        self.addChildViewController(categoryController)
+        self.addChild(categoryController)
         stackContainer.addArrangedSubview(categoryController.view)
 
         imvAvatar.layer.borderColor = UIColor(hex: "0xFEDA00").cgColor

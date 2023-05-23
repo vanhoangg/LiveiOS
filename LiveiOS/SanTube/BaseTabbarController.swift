@@ -45,7 +45,7 @@ class BaseTabbarController: UITabBarController {
     var beginDragYPoint: CGFloat = 0
     var beginDragXPoint: CGFloat = 0
 
-    func drag(_ gesture: UIPanGestureRecognizer) {
+    @objc func drag(_ gesture: UIPanGestureRecognizer) {
         guard isMinimize == true else {return}
         guard let superview = vwQuickView.superview, let window = self.view.window else { return }
         let translation = gesture.translation(in: self.view.window)
@@ -116,7 +116,7 @@ class BaseTabbarController: UITabBarController {
     func configQuickView() {
         if vwQuickView == nil {return}
         guard let _ = self.view.window else { return }
-        UIApplication.shared.keyWindow?.bringSubview(toFront: vwQuickView)
+        UIApplication.shared.keyWindow?.bringSubviewToFront(vwQuickView)
         // setup quick video
         let quickViewController = self.view.window!.quickViewcontroller()
 
@@ -129,7 +129,7 @@ class BaseTabbarController: UITabBarController {
 
         if vwQuickView.subviews.count == 0 {
             vwQuickView.addSubview(quickViewController.view)
-            quickViewController.didMove(toParentViewController: nil)
+            quickViewController.didMove(toParent: nil)
             quickViewController.view.translatesAutoresizingMaskIntoConstraints = false
             quickViewController.view.topAnchor.constraint(equalTo: vwQuickView.topAnchor).isActive = true
             quickViewController.view.leadingAnchor.constraint(equalTo: vwQuickView.leadingAnchor).isActive = true
@@ -288,10 +288,10 @@ class BaseTabbarController: UITabBarController {
         window.layoutIfNeeded()
 
         for constraint in vwQuickView.superview!.constraints.reversed() {
-            if constraint.firstAttribute == .top && constraint.firstItem.isEqual(vwQuickView) {
+            if constraint.firstAttribute == .top && (constraint.firstItem?.isEqual(vwQuickView) ?? false) {
                 vwQuickView.superview!.removeConstraint(constraint)
             }
-            if constraint.firstAttribute == .leading && constraint.firstItem.isEqual(vwQuickView) {
+            if constraint.firstAttribute == .leading && ((constraint.firstItem?.isEqual(vwQuickView)) ?? false) {
                 vwQuickView.superview!.removeConstraint(constraint)
             }
 
@@ -319,22 +319,22 @@ class BaseTabbarController: UITabBarController {
         window.layoutIfNeeded()
 
         for constraint in vwQuickView.constraints {
-            if constraint.firstAttribute == .width && constraint.firstItem.isEqual(vwQuickView) {
+            if constraint.firstAttribute == .width && (constraint.firstItem?.isEqual(vwQuickView) ?? false) {
                 vwQuickView.removeConstraint(constraint)
             }
 
-            if constraint.firstAttribute == .height && constraint.firstItem.isEqual(vwQuickView) {
+            if constraint.firstAttribute == .height && (constraint.firstItem?.isEqual(vwQuickView) ?? false) {
                 vwQuickView.removeConstraint(constraint)
             }
         }
 
         for constraint in vwQuickView.superview!.constraints.reversed() {
 
-            if constraint.firstAttribute == .trailing && constraint.firstItem!.isEqual(vwQuickView) {
+            if constraint.firstAttribute == .trailing && (constraint.firstItem!.isEqual(vwQuickView) ?? false) {
                 constraint.constant = 0
             }
 
-            if constraint.firstAttribute == .bottom && constraint.firstItem!.isEqual(vwQuickView) {
+            if constraint.firstAttribute == .bottom && (constraint.firstItem!.isEqual(vwQuickView) ?? false) {
                 constraint.constant = 0
             }
         }
@@ -349,7 +349,7 @@ class BaseTabbarController: UITabBarController {
     }
 
     // MARK: - notification
-    func getNotification(_ notification: NSNotification) {
+    @objc func getNotification(_ notification: NSNotification) {
         if let userInfo = notification.userInfo as? JSON,
             let action = userInfo["action"] as? String {
             if action == "register" {

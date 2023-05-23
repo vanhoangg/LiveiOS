@@ -73,28 +73,28 @@ class CreateStreamView: UIView, UITextFieldDelegate {
         if let tap = tapGesture {
             viewBg.addGestureRecognizer(tap)
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardNotification(notification:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardNotification(notification:)), name: UIResponder.keyboardDidShowNotification, object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardHideNotification(notification:)), name: NSNotification.Name.UIKeyboardDidHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardHideNotification(notification:)), name: UIResponder.keyboardDidHideNotification, object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame), name: NSNotification.Name.UIKeyboardDidChangeFrame, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame), name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
 
         buttonCreate.isEnabled = false
         buttonCreate.alpha = 0.5
        // tfTitle.becomeFirstResponder()
         tfTitle.autocapitalizationType = .words
         tfTitle.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        tfTitle.attributedPlaceholder = NSAttributedString(string: "Enter your stream title", attributes: [NSForegroundColorAttributeName: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.5)])
+        tfTitle.attributedPlaceholder = NSAttributedString(string: "Enter your stream title", attributes: [NSAttributedString.Key.foregroundColor: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.5)])
         tfTitle.textColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         tfTitle.tintColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
 
-        btnTypeStream.setImage(#imageLiteral(resourceName: "ic_earth").resizeImageWith(newSize: CGSize(width: 25, height: 25)).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControlState())
-        btnTypeStream.addTarget(self, action: #selector(actionTypeStream(_:)), for: UIControlEvents.touchUpInside)
+        btnTypeStream.setImage(#imageLiteral(resourceName: "ic_earth").resizeImageWith(newSize: CGSize(width: 25, height: 25)).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControl.State())
+        btnTypeStream.addTarget(self, action: #selector(actionTypeStream(_:)), for: UIControl.Event.touchUpInside)
 
         btnCreateProduct.layer.masksToBounds = true
         btnCreateProduct.layer.cornerRadius = btnCreateProduct.frame.size.width/2
         btnCreateProduct.backgroundColor = #colorLiteral(red: 0.9882352941, green: 0.8078431373, blue: 0.1843137255, alpha: 1)
-        btnCreateProduct.setImage(#imageLiteral(resourceName: "open_shop").resizeImageWith(newSize: CGSize(width: 24, height: 24)).tint(with: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)), for: UIControlState())
+        btnCreateProduct.setImage(#imageLiteral(resourceName: "open_shop").resizeImageWith(newSize: CGSize(width: 24, height: 24)).tint(with: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)), for: UIControl.State())
 
         // choose type for Stream
         vwChooseType.isHidden = true
@@ -103,37 +103,37 @@ class CreateStreamView: UIView, UITextFieldDelegate {
         vwStoreButtonType.layer.masksToBounds = true
         vwStoreButtonType.layer.cornerRadius = 5
         imvTargetChooseType.image = #imageLiteral(resourceName: "ic_triangle_down").resizeImageWith(newSize: CGSize(width: 10, height: 10)).tint(with: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0.5))
-        btnChooseTypePublic.setImage(#imageLiteral(resourceName: "ic_earth").resizeImageWith(newSize: CGSize(width: 20, height: 20)).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControlState())
-        btnChooseTypePrivate.setImage(#imageLiteral(resourceName: "ic_private").resizeImageWith(newSize: CGSize(width: 20, height: 20)).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControlState())
+        btnChooseTypePublic.setImage(#imageLiteral(resourceName: "ic_earth").resizeImageWith(newSize: CGSize(width: 20, height: 20)).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControl.State())
+        btnChooseTypePrivate.setImage(#imageLiteral(resourceName: "ic_private").resizeImageWith(newSize: CGSize(width: 20, height: 20)).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControl.State())
 
         imvCheckedPrivate.image = nil
         imvCheckedPublic.image = #imageLiteral(resourceName: "ic_check_white_96").resizeImageWith(newSize: CGSize(width: 15, height: 15))
 
-        btnChooseTypePublic.addTarget(self, action: #selector(actionTypeStream(_:)), for: UIControlEvents.touchUpInside)
-        btnChooseTypePrivate.addTarget(self, action: #selector(actionTypeStream(_:)), for: UIControlEvents.touchUpInside)
+        btnChooseTypePublic.addTarget(self, action: #selector(actionTypeStream(_:)), for: UIControl.Event.touchUpInside)
+        btnChooseTypePrivate.addTarget(self, action: #selector(actionTypeStream(_:)), for: UIControl.Event.touchUpInside)
     }
     deinit {
         if let tap = tapGesture {
             viewBg.removeGestureRecognizer(tap)
         }
     }
-    func keyboardNotification(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+    @objc func keyboardNotification(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             if bottomConstraint.constant == 0 {
                 bottomConstraint.constant += keyboardSize.height
             }
         }
         self.shouldStartTutorial?()
     }
-    func keyboardHideNotification(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+    @objc func keyboardHideNotification(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             if bottomConstraint.constant != 0 {
                 bottomConstraint.constant = 0
             }
         }
     }
-    func keyboardWillChangeFrame(notification: NSNotification) {
-        if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+    @objc func keyboardWillChangeFrame(notification: NSNotification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             if bottomConstraint.constant == 0 {
                 bottomConstraint.constant += keyboardRectangle.size.height
@@ -143,16 +143,16 @@ class CreateStreamView: UIView, UITextFieldDelegate {
         }
     }
 
-    func actionTypeStream(_ sender: UIButton) {
+    @objc func actionTypeStream(_ sender: UIButton) {
         if sender.isEqual(btnChooseTypePrivate) {
             imvCheckedPublic.image = nil
             imvCheckedPrivate.image = #imageLiteral(resourceName: "ic_check_white_96").resizeImageWith(newSize: CGSize(width: 15, height: 15))
-            btnTypeStream.setImage(#imageLiteral(resourceName: "ic_private").resizeImageWith(newSize: CGSize(width: 25, height: 25)).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControlState())
+            btnTypeStream.setImage(#imageLiteral(resourceName: "ic_private").resizeImageWith(newSize: CGSize(width: 25, height: 25)).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControl.State())
             btnTypeStream.isSelected = true
         } else if sender.isEqual(btnChooseTypePublic) {
             imvCheckedPrivate.image = nil
             imvCheckedPublic.image = #imageLiteral(resourceName: "ic_check_white_96").resizeImageWith(newSize: CGSize(width: 15, height: 15))
-            btnTypeStream.setImage(#imageLiteral(resourceName: "ic_earth").resizeImageWith(newSize: CGSize(width: 25, height: 25)).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControlState())
+            btnTypeStream.setImage(#imageLiteral(resourceName: "ic_earth").resizeImageWith(newSize: CGSize(width: 25, height: 25)).tint(with: #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)), for: UIControl.State())
             btnTypeStream.isSelected = false
         }
 
@@ -161,7 +161,7 @@ class CreateStreamView: UIView, UITextFieldDelegate {
         }, completion: nil)
     }
 
-    func touchView(_ gesture: UIGestureRecognizer) {
+    @objc func touchView(_ gesture: UIGestureRecognizer) {
         self.tfTitle.resignFirstResponder()
     }
     @IBAction func actionBackView(_ sender: Any) {
@@ -204,7 +204,7 @@ class CreateStreamView: UIView, UITextFieldDelegate {
         }
         return true
     }
-    func textFieldDidChange(_ textField: UITextField) {
+    @objc func textFieldDidChange(_ textField: UITextField) {
         self.titleStream = textField.text
         if self.cardID?.isEmpty == false && self.titleStream?.isEmpty == false {
             buttonCreate.isEnabled = true

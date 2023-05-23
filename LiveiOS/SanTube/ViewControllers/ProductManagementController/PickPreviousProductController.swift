@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol PickPreviousProductDelegate: class {
+protocol PickPreviousProductDelegate: AnyObject {
 	func onPickPreviousProduct(_ products: [Product])
 }
 
@@ -32,7 +32,7 @@ class PickPreviousProductController: BaseController, ListProductViewDelegate {
 
 		buttonBack = UIButton(type: .custom)
 		buttonBack.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-		buttonBack.setImage(UIImage(named: "icon_back_product")?.tint(with: UIColor.white), for: UIControlState())
+        buttonBack.setImage(UIImage(named: "icon_back_product")?.tint(with: UIColor.white), for: UIControl.State())
 		buttonBack.addTarget(self, action: #selector(actionBack(_:)), for: .touchUpInside)
 		let itemBack = UIBarButtonItem(customView: buttonBack)
 		self.navigationItem.leftBarButtonItems = [itemBack]
@@ -69,7 +69,7 @@ class PickPreviousProductController: BaseController, ListProductViewDelegate {
     }
 
 	// MARK: - IBAction
-	func actionBack(_ sender: Any) {
+    @objc func actionBack(_ sender: Any) {
 		if listProducts.count > 0 {
 			delegate?.onPickPreviousProduct(listProductview.listPickPreviousProducts)
 		}

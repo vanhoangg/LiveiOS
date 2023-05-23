@@ -712,7 +712,6 @@
 		D7E1AFB81FD16F7B0066BC28 /* ChooseCategoryStreamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E1AFB51FD16F7B0066BC28 /* ChooseCategoryStreamView.swift */; };
 		D7E1AFB91FD16F7B0066BC28 /* ChooseCategoryStreamView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D7E1AFB61FD16F7B0066BC28 /* ChooseCategoryStreamView.xib */; };
 		D7E1AFBA1FD16F7B0066BC28 /* ChooseCategoryStreamBlockView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D7E1AFB71FD16F7B0066BC28 /* ChooseCategoryStreamBlockView.xib */; };
-		D7E3F5D6206B436200ABBAB7 /* Pods_SanTube.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7E3F5D7206B436200ABBAB7 /* Pods_SanTube.framework */; };
 		D7ED25F51FE0D73A003A3084 /* QuickViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED25F31FE0D73A003A3084 /* QuickViewController.swift */; };
 		D7ED25F61FE0D73A003A3084 /* QuickViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D7ED25F41FE0D73A003A3084 /* QuickViewController.xib */; };
 		D7ED25FA1FE105EA003A3084 /* DetailStreamController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ED25F81FE105EA003A3084 /* DetailStreamController.swift */; };
@@ -766,6 +765,7 @@
 		D7FB44D11FBC5EA2007C366C /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F412EF1FBC57D9001EDF2D /* Server.swift */; };
 		D7FB44D21FBC5EA2007C366C /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F412F01FBC57D9001EDF2D /* TabBarController.swift */; };
 		D7FB44D31FBC5ED5007C366C /* BUUP.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = D7F412E11FBC57D9001EDF2D /* BUUP.xcdatamodeld */; };
+		F40C232063D80C0624AB1F3E /* Pods_SanTube.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFC68722047D5E63EE368A5B /* Pods_SanTube.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -786,7 +786,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2D34AFC580DDB6D9B9B13C3C /* Pods_SanTube.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SanTube.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C7BDC1920217B1D0028CBAF /* PickPreviousProductController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickPreviousProductController.swift; sourceTree = "<group>"; };
 		4C7BDC1A20217B1D0028CBAF /* PickPreviousProductController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PickPreviousProductController.xib; sourceTree = "<group>"; };
 		6021D64820201582002F3453 /* SanTubePro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SanTubePro.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -831,8 +830,9 @@
 		60CA85B71FEBBAAA00DFDCBF /* TLPhotosPicker+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TLPhotosPicker+Extension.swift"; sourceTree = "<group>"; };
 		60F56AB41FF4F19C003F8DF8 /* FilterVideoList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterVideoList.swift; sourceTree = "<group>"; };
 		60F56AB61FF4F1B3003F8DF8 /* FilterVideoList.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FilterVideoList.xib; sourceTree = "<group>"; };
-		B0BA786E03E464B61D55A679 /* Pods-SanTube.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SanTube.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SanTube/Pods-SanTube.debug.xcconfig"; sourceTree = "<group>"; };
-		BAA32E15B724271DCE8795B3 /* Pods-SanTube.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SanTube.release.xcconfig"; path = "Pods/Target Support Files/Pods-SanTube/Pods-SanTube.release.xcconfig"; sourceTree = "<group>"; };
+		6DF8D1842FEF53B09163EAEE /* Pods-SanTube.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SanTube.debug.xcconfig"; path = "Target Support Files/Pods-SanTube/Pods-SanTube.debug.xcconfig"; sourceTree = "<group>"; };
+		7B34C9615E8B49E51563E3F1 /* Pods-SanTube.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SanTube.release.xcconfig"; path = "Target Support Files/Pods-SanTube/Pods-SanTube.release.xcconfig"; sourceTree = "<group>"; };
+		AFC68722047D5E63EE368A5B /* Pods_SanTube.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SanTube.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D70547791FEA01CF007504E4 /* BaseApplyQuickVideoController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseApplyQuickVideoController.swift; sourceTree = "<group>"; };
 		D708768A1FE221010007F415 /* RelatedVideoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedVideoController.swift; sourceTree = "<group>"; };
 		D708768B1FE221010007F415 /* RelatedVideoController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RelatedVideoController.xib; sourceTree = "<group>"; };
@@ -1359,7 +1359,6 @@
 		D7E1AFB51FD16F7B0066BC28 /* ChooseCategoryStreamView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseCategoryStreamView.swift; sourceTree = "<group>"; };
 		D7E1AFB61FD16F7B0066BC28 /* ChooseCategoryStreamView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChooseCategoryStreamView.xib; sourceTree = "<group>"; };
 		D7E1AFB71FD16F7B0066BC28 /* ChooseCategoryStreamBlockView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChooseCategoryStreamBlockView.xib; sourceTree = "<group>"; };
-		D7E3F5D7206B436200ABBAB7 /* Pods_SanTube.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_SanTube.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7ED25F31FE0D73A003A3084 /* QuickViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickViewController.swift; sourceTree = "<group>"; };
 		D7ED25F41FE0D73A003A3084 /* QuickViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QuickViewController.xib; sourceTree = "<group>"; };
 		D7ED25F81FE105EA003A3084 /* DetailStreamController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailStreamController.swift; sourceTree = "<group>"; };
@@ -1431,11 +1430,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D70B1B8F206B463B00F49676 /* IJKMediaFramework.framework in Frameworks */,
-				D7E3F5D6206B436200ABBAB7 /* Pods_SanTube.framework in Frameworks */,
 				D768DC601FF37EE700AF1EEA /* Daysquare.framework in Frameworks */,
 				D7F314C51FF20069004BCDEF /* SocketIO.framework in Frameworks */,
 				609609E41FCD799600577076 /* libz.tbd in Frameworks */,
 				609609E61FCD79A200577076 /* libbz2.tbd in Frameworks */,
+				F40C232063D80C0624AB1F3E /* Pods_SanTube.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1456,6 +1455,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0207D5F8E63AF54DDE89F81C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6DF8D1842FEF53B09163EAEE /* Pods-SanTube.debug.xcconfig */,
+				7B34C9615E8B49E51563E3F1 /* Pods-SanTube.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		602E06C51FFF659300EA5454 /* ProductView */ = {
 			isa = PBXGroup;
 			children = (
@@ -1478,8 +1487,8 @@
 				D7A52B9A203EA3E6006EDC03 /* SanTubeTests */,
 				D732C5CE203EF95E00B258DC /* SanTubeUITests */,
 				6048BE941FA6FDF5005C57C3 /* Products */,
-				7213B63440ECD0B28FADA3FE /* Pods */,
 				E75DF2E87984B716EA6F8DDF /* Frameworks */,
+				0207D5F8E63AF54DDE89F81C /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1541,15 +1550,6 @@
 				4C7BDC1A20217B1D0028CBAF /* PickPreviousProductController.xib */,
 			);
 			path = ProductManagementController;
-			sourceTree = "<group>";
-		};
-		7213B63440ECD0B28FADA3FE /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				B0BA786E03E464B61D55A679 /* Pods-SanTube.debug.xcconfig */,
-				BAA32E15B724271DCE8795B3 /* Pods-SanTube.release.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 		D70876881FE220CE0007F415 /* RelatedVideoController */ = {
@@ -2568,7 +2568,6 @@
 			isa = PBXGroup;
 			children = (
 				D70B1B8D206B461F00F49676 /* IJKMediaFramework.framework */,
-				D7E3F5D7206B436200ABBAB7 /* Pods_SanTube.framework */,
 				D7A52BB5203EA7BC006EDC03 /* Alamofire.framework */,
 				D7A52BB6203EA7BC006EDC03 /* Bolts.framework */,
 				D7A52BB7203EA7BC006EDC03 /* Daysquare.framework */,
@@ -2592,7 +2591,7 @@
 				609609DE1FCD795E00577076 /* AVFoundation.framework */,
 				609609DD1FCD795200577076 /* AudioToolbox.framework */,
 				D70F1E741FBA9F570070F9AA /* CoreData.framework */,
-				2D34AFC580DDB6D9B9B13C3C /* Pods_SanTube.framework */,
+				AFC68722047D5E63EE368A5B /* Pods_SanTube.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2621,11 +2620,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6048BEA51FA6FDF5005C57C3 /* Build configuration list for PBXNativeTarget "SanTube" */;
 			buildPhases = (
-				03A3C86D0DFB4BADCFD37D04 /* [CP] Check Pods Manifest.lock */,
+				4B904EFEE1BD6827AD5C7DFF /* [CP] Check Pods Manifest.lock */,
 				6048BE8F1FA6FDF5005C57C3 /* Sources */,
 				6048BE901FA6FDF5005C57C3 /* Frameworks */,
 				6048BE911FA6FDF5005C57C3 /* Resources */,
-				5EC54952FAFD870DA49892CD /* [CP] Embed Pods Frameworks */,
+				1EC02333712A10BBB56AE3BE /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2904,25 +2903,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		03A3C86D0DFB4BADCFD37D04 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SanTube-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5EC54952FAFD870DA49892CD /* [CP] Embed Pods Frameworks */ = {
+		1EC02333712A10BBB56AE3BE /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2930,7 +2911,6 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SanTube/Pods-SanTube-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
-				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
 				"${BUILT_PRODUCTS_DIR}/Daysquare/Daysquare.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
@@ -2944,7 +2924,6 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Daysquare.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
@@ -2958,6 +2937,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SanTube/Pods-SanTube-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4B904EFEE1BD6827AD5C7DFF /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SanTube-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -3825,7 +3826,7 @@
 		};
 		6048BEA61FA6FDF5005C57C3 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B0BA786E03E464B61D55A679 /* Pods-SanTube.debug.xcconfig */;
+			baseConfigurationReference = 6DF8D1842FEF53B09163EAEE /* Pods-SanTube.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -3881,7 +3882,7 @@
 		};
 		6048BEA71FA6FDF5005C57C3 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BAA32E15B724271DCE8795B3 /* Pods-SanTube.release.xcconfig */;
+			baseConfigurationReference = 7B34C9615E8B49E51563E3F1 /* Pods-SanTube.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";

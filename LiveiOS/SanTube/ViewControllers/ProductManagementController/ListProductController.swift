@@ -47,7 +47,7 @@ class ListProductController: BaseController, CreateProductDelegate, ListProductV
         listProductview.delegate = self
         buttonBack = UIButton(type: .custom)
         buttonBack.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-        buttonBack.setImage(UIImage(named: "icon_back_product")?.tint(with: UIColor.white), for: UIControlState())
+        buttonBack.setImage(UIImage(named: "icon_back_product")?.tint(with: UIColor.white), for: UIControl.State())
         buttonBack.addTarget(self, action: #selector(actionBack(_:)), for: .touchUpInside)
         let itemBack = UIBarButtonItem(customView: buttonBack)
         self.navigationItem.leftBarButtonItems = [itemBack]
@@ -56,7 +56,7 @@ class ListProductController: BaseController, CreateProductDelegate, ListProductV
         buttonProduct.frame = CGRect(x: 0, y: 0, width: 30, height: 40)
         buttonProduct.clipsToBounds = true
         buttonProduct.semanticContentAttribute = .forceLeftToRight
-        buttonProduct.setImage(UIImage(named: "manager_product")?.tint(with: UIColor.white), for: UIControlState())
+        buttonProduct.setImage(UIImage(named: "manager_product")?.tint(with: UIColor.white), for: UIControl.State())
         buttonProduct.addTarget(self, action: #selector(actionCreateProduct(_:)), for: .touchUpInside)
         let itemProduct = UIBarButtonItem(customView: buttonProduct)
         self.navigationItem.rightBarButtonItems = [itemProduct]
@@ -90,13 +90,13 @@ class ListProductController: BaseController, CreateProductDelegate, ListProductV
         // Dispose of any resources that can be recreated.
     }
 
-     func actionBack(_ sender: Any) {
+    @objc func actionBack(_ sender: Any) {
         if listProduct.count > 0 {
             delegate?.onOpenShop(listProduct)
         }
         self.navigationController?.dismiss(animated: true, completion: nil)
     }
-    func actionCreateProduct(_ sender: Any) {
+    @objc func actionCreateProduct(_ sender: Any) {
         let vc = CreateProductController(nibName: "CreateProductController", bundle: Bundle.main)
         vc.streamID = self.streamID
         vc.delegate = self

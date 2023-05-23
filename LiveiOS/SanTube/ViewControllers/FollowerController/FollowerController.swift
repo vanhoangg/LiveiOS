@@ -99,7 +99,7 @@ class FollowerController: BaseController {
     private func config() {
         relatedController = RelatedVideoController(nibName: "RelatedVideoController", bundle: Bundle.main)
         relatedController.type = .follower
-        self.addChildViewController(relatedController)
+        self.addChild(relatedController)
         stackContainer.addArrangedSubview(relatedController.view)
         relatedController.onLoadStream = {[weak self] str in
             guard let _self = self else {return}
@@ -115,7 +115,7 @@ class FollowerController: BaseController {
     private func loadFollowingUsers() {
         vwListFollowedUsers.startLoading(isStart: true)
         guard let user = Account.current, !user.is_guest else { return }
-        view.startLoading(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+        view.startLoading(activityIndicatorStyle: UIActivityIndicatorView.Style.gray)
         lblNotice.isHidden = true
         Server.shared.getListFollows(userIds: [user.id], isFollowing: true, page: 1) {[weak self] (listUsers, errMSG, _) in
             guard let _self = self else {return}
@@ -127,7 +127,7 @@ class FollowerController: BaseController {
                 if let list = listUsers {
                     _self.lblNotice.isHidden = list.count > 0
                     _self.vwListFollowedUsers.load(data: list)
-                    _self.relatedController.listUserIds = list.flatMap {$0.id}
+                    _self.relatedController.listUserIds = list.compactMap {$0.id}
                 } else {
                     _self.lblNotice.isHidden = false
                 }

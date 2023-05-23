@@ -118,7 +118,7 @@ class PresentVideoController: BaseController, UIGestureRecognizerDelegate {
         refreshLayout()
     }
 
-    override func didMove(toParentViewController parent: UIViewController?) {
+    override func didMove(toParent parent: UIViewController?) {
         super.didMove(toParentViewController: parent)
         forceOpenPlayBackControl = parent != nil
         if avPlayerStream != nil {

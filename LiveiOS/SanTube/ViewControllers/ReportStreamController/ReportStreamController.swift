@@ -22,7 +22,7 @@ class ReportStreamController: BasePresentController {
         if sender.tag >= OptionsReport.count {return}
         if let content = sender.titleLabel?.text, let user = Account.current, let stream = self.stream {
             // call api report
-            sender.startAnimation(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
+            sender.startAnimation(activityIndicatorStyle: .medium)
             disableControl()
             Server.shared.report(streamId: stream.id, userId: user.id, content: content, {[weak self] (errorMS) in
                 guard let _self = self else {return}
@@ -40,7 +40,7 @@ class ReportStreamController: BasePresentController {
         }
     }
 
-    func touchGesture(_ sender: UITapGestureRecognizer) {
+    @objc func touchGesture(_ sender: UITapGestureRecognizer) {
         closeView()
     }
 

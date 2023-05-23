@@ -55,7 +55,7 @@ class RelatedVideoBlockView: UIView {
     }
 
     // MARK: - event
-    func touchView(_ gesture: UIGestureRecognizer) {
+    @objc func touchView(_ gesture: UIGestureRecognizer) {
         guard let obj = self.object else { return }
         self.onSelectObject?(obj)
     }

@@ -11,7 +11,7 @@ import UIKit
 class OrderMessageController: BaseController {
 
     // MARK: - event
-    func touch(sender: UITapGestureRecognizer) {
+    @objc func touch(sender: UITapGestureRecognizer) {
         close()
     }
 
